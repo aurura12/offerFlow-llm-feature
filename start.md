@@ -12,19 +12,19 @@ npm run dev        # 启动开发服务器
 
 ## 登录账号
 
-| 用户名 | 密码 | 说明 |
-|--------|------|------|
-| `zhou` | `jiABNHDv9qD8mp3` | 主账号，37 条岗位数据 |
-| `user` | `000000` | 演示账号，14 条演示数据 |
+| 用户名   | 密码                 | 说明                    |
+| -------- | -------------------- | ----------------------- |
+| `zhou` | `jiABNHDv9qD8mp3`  | 主账号，37 条岗位数据   |
+| `user` | `000000`           | 演示账号，14 条演示数据 |
 
 ## AI 面试分析配置（可选）
 
 登录后进入 **设置 → AI 模型配置**，填入你的 LLM API Key：
 
-| 提供商 | Base URL | 默认模型 |
-|--------|----------|----------|
-| DeepSeek | `https://api.deepseek.com` | `deepseek-chat` |
-| OpenAI | `https://api.openai.com/v1` | `gpt-4o` |
+| 提供商   | Base URL                          | 默认模型                     |
+| -------- | --------------------------------- | ---------------------------- |
+| DeepSeek | `https://api.deepseek.com`      | `deepseek-chat`            |
+| OpenAI   | `https://api.openai.com/v1`     | `gpt-4o`                   |
 | 硅基流动 | `https://api.siliconflow.cn/v1` | `Qwen/Qwen2.5-7B-Instruct` |
 
 点击「测试连接」验证可用后保存。配置保存在浏览器本地存储，不会上传到服务器。

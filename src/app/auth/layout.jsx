@@ -41,7 +41,7 @@ export default function AuthLayout({ children }) {
 
       {/* Auth content with fade-in */}
       <div
-        suppressHydrationWarning
+      suppressHydrationWarning  
         className={`
           w-full transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]
           ${splashDone ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}
