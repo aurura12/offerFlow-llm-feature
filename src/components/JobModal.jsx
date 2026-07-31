@@ -13,6 +13,7 @@ const WORK_MODE_OPTIONS = [
 ]
 const CHANNEL_OPTIONS = ['', '内推', '官网投递', '猎头', '招聘平台', '校园招聘', '其他']
 const PRIORITY_OPTIONS = ['高', '中', '低']
+const CITY_OPTIONS = [{ value: '', label: '请选择' }, '北京', '上海', '深圳', '杭州', '广州', '成都', '南京', '武汉', '西安', '合肥', '苏州', '长沙', '天津', '重庆', '厦门', '珠海']
 
 const emptyForm = {
   companyName: '', jobTitle: '', status: '感兴趣', city: '', salaryRange: '',
@@ -28,7 +29,7 @@ function Input({ label, value, onChange, placeholder, type = 'text', large, ...r
       <label className="text-sm text-offer-muted block mb-1">{label}</label>
       {large && type === 'textarea' ? (
         <textarea
-          value={value}
+          value={value ?? ''}
           onChange={onChange}
           placeholder={placeholder}
           rows={4}
@@ -38,7 +39,7 @@ function Input({ label, value, onChange, placeholder, type = 'text', large, ...r
       ) : (
         <input
           type={type}
-          value={value}
+          value={value ?? ''}
           onChange={onChange}
           placeholder={placeholder}
           className="min-h-[40px] w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 outline-none transition-all duration-200 focus:border-purple-400/70 focus:ring-2 focus:ring-purple-500/20"
@@ -54,7 +55,7 @@ function Select({ label, value, onChange, options }) {
     <div>
       <label className="text-sm text-offer-muted block mb-1">{label}</label>
       <select
-        value={value}
+        value={value ?? ''}
         onChange={onChange}
         className="min-h-[40px] rounded-xl border border-white/10 bg-gray-950 px-4 py-2.5 text-sm font-medium text-white outline-none transition-all duration-200 focus:border-purple-400/70 focus:ring-2 focus:ring-purple-500/20 appearance-none cursor-pointer"
       >
@@ -138,7 +139,7 @@ export default function JobModal({ open, job, onClose, initialStatus }) {
             <Input label="岗位名称 *" value={form.jobTitle} onChange={(e) => handleChange('jobTitle', e.target.value)} placeholder="例如：高级后端工程师" />
 
             <Select label="当前状态" value={form.status} onChange={(e) => handleChange('status', e.target.value)} options={STATUS_OPTIONS} />
-            <Input label="城市" value={form.city} onChange={(e) => handleChange('city', e.target.value)} placeholder="例如：北京" />
+            <Select label="城市" value={form.city ?? ''} onChange={(e) => handleChange('city', e.target.value)} options={CITY_OPTIONS} />
 
             <Input label="薪资范围" value={form.salaryRange} onChange={(e) => handleChange('salaryRange', e.target.value)} placeholder="例如：30K-50K" />
             <Select label="工作模式" value={form.workMode} onChange={(e) => handleChange('workMode', e.target.value)} options={WORK_MODE_OPTIONS} />
@@ -153,7 +154,7 @@ export default function JobModal({ open, job, onClose, initialStatus }) {
             <div>
               <label className="text-sm text-offer-muted block mb-1">关联简历</label>
               <select
-                value={form.resumeId}
+                value={form.resumeId ?? ''}
                 onChange={(e) => handleChange('resumeId', e.target.value)}
                 className="min-h-[40px] rounded-xl border border-white/10 bg-gray-950 px-4 py-2.5 text-sm font-medium text-white outline-none transition-all duration-200 focus:border-purple-400/70 focus:ring-2 focus:ring-purple-500/20 appearance-none cursor-pointer"
               >

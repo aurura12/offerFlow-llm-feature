@@ -145,7 +145,7 @@ export default function Resumes() {
               {/* Top section */}
               <div className="p-5 pb-3">
                 <div className="flex items-start gap-3 mb-3">
-                  <div className={`w-10 h-14 rounded-xl flex items-center justify-center text-[11px] font-bold shrink-0 border ${
+                  <div className={`w-12 h-16 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 border ${
                     r.format === 'PDF' ? 'bg-red-500/10 text-red-400 border-red-500/20'
                     : r.format === 'DOCX' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
                     : 'bg-green-500/10 text-green-400 border-green-500/20'
@@ -154,11 +154,11 @@ export default function Resumes() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-white font-semibold truncate">{r.name}</h3>
-                      {r.isDefault && <span className="text-[10px] text-offer-primary bg-offer-primary/10 px-1.5 py-0.5 rounded shrink-0">默认</span>}
+                      <h3 className="text-white font-semibold text-base truncate">{r.name}</h3>
+                      {r.isDefault && <span className="text-[11px] text-offer-primary bg-offer-primary/10 px-1.5 py-0.5 rounded shrink-0">默认</span>}
                     </div>
-                    <p className="text-xs text-offer-muted mt-0.5">{r.version}</p>
-                    <p className="text-[11px] text-offer-muted mt-0.5">{r.language} · {r.format} · {r.fileSize || '未知'}</p>
+                    <p className="text-sm text-offer-muted mt-0.5">{r.version}</p>
+                    <p className="text-xs text-offer-muted mt-0.5">{r.language} · {r.format} · {r.fileSize || '未知'}</p>
                   </div>
                 </div>
 
@@ -166,29 +166,29 @@ export default function Resumes() {
                 {r.tags && r.tags.length > 0 && (
                   <div className="flex gap-1 flex-wrap mb-2">
                     {r.tags.map((t) => (
-                      <span key={t} className="text-[10px] bg-theme-hover text-offer-muted px-1.5 py-0.5 rounded-full">{t}</span>
+                      <span key={t} className="text-[11px] bg-theme-hover text-offer-muted px-1.5 py-0.5 rounded-full">{t}</span>
                     ))}
                   </div>
                 )}
 
                 {/* Target & Update */}
-                <div className="flex items-center justify-between text-[11px] text-offer-muted">
-                  <span className="bg-offer-primary/10 text-offer-accent px-2 py-0.5 rounded-full truncate max-w-[140px]">{r.target || '通用'}</span>
+                <div className="flex items-center justify-between text-xs text-offer-muted">
+                  <span className="bg-offer-primary/10 text-offer-accent px-2 py-0.5 rounded-full truncate max-w-[150px]">{r.target || '通用'}</span>
                   <span>{r.updatedAt}</span>
                 </div>
 
                 {/* Version note */}
                 {r.versionNote && (
-                  <p className="text-[11px] text-offer-muted mt-2 leading-relaxed line-clamp-2">{r.versionNote}</p>
+                  <p className="text-xs text-offer-muted mt-2 leading-relaxed line-clamp-2">{r.versionNote}</p>
                 )}
               </div>
 
               {/* Stats bar */}
-              <div className="mx-5 px-3.5 py-2.5 bg-white/[0.02] rounded-xl border border-white/[0.06] grid grid-cols-3 gap-x-2 gap-y-1.5 text-center mb-3">
+              <div className="mx-5 px-4 py-3 bg-white/[0.02] rounded-xl border border-white/[0.06] grid grid-cols-3 gap-x-2 gap-y-2 text-center mb-3">
                 <StatValue label="投递" value={s.sentCount || 0} />
                 <StatValue label="面试" value={s.interviewPeopleCount || 0} />
                 <StatValue label="Offer" value={s.offerCount || 0} />
-                <div className="col-span-3 border-t border-white/[0.04] my-0.5" />
+                <div className="col-span-3 border-t border-white/[0.04]" />
                 <StatValue label="回复" value={s.replyCount || 0} />
                 <StatValue label="面试率" value={s.sentCount > 0 ? `${s.interviewRate}%` : '-'} />
                 <StatValue label="Offer率" value={s.sentCount > 0 ? `${s.offerRate}%` : '-'} />
@@ -223,8 +223,8 @@ export default function Resumes() {
 function StatValue({ label, value }) {
   return (
     <div>
-      <p className="text-[11px] text-white font-semibold">{value}</p>
-      <p className="text-[9px] text-offer-muted">{label}</p>
+      <p className="text-sm text-white font-semibold">{value}</p>
+      <p className="text-[11px] text-offer-muted">{label}</p>
     </div>
   )
 }
@@ -233,7 +233,7 @@ function ActionBtn({ label, onClick, danger }) {
   return (
     <button
       onClick={onClick}
-      className={`flex-1 py-2.5 text-xs font-medium transition-all border-r border-white/[0.06] last:border-r-0 hover:bg-white/5 ${danger ? 'text-offer-muted hover:text-red-400' : 'text-offer-muted hover:text-white'}`}
+      className={`flex-1 py-2.5 text-sm font-medium transition-all border-r border-white/[0.06] last:border-r-0 hover:bg-white/5 ${danger ? 'text-offer-muted hover:text-red-400' : 'text-offer-muted hover:text-white'}`}
     >
       {label}
     </button>

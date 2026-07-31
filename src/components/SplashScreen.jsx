@@ -54,6 +54,7 @@ export default function SplashScreen({ entered, onEnter }) {
 
   return (
     <div
+      suppressHydrationWarning
       className={`
         fixed inset-0 z-50 flex h-screen w-screen flex-col items-center justify-center overflow-hidden
         bg-cover bg-center bg-no-repeat
