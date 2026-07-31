@@ -5,7 +5,12 @@ import ModalHeader from './ModalHeader'
 import GlowCard from './GlowCard'
 
 const STATUS_OPTIONS = ['感兴趣', '准备投递', '已投递', 'OA / 笔试', '一面中', '二面中', '三面中', '终面中', 'Offer', '已结束']
-const WORK_MODE_OPTIONS = ['onsite', 'remote', 'hybrid']
+export const WORK_MODE_LABELS = { onsite: '到岗', remote: '远程', hybrid: '混合办公' }
+const WORK_MODE_OPTIONS = [
+  { value: 'onsite', label: '到岗' },
+  { value: 'remote', label: '远程' },
+  { value: 'hybrid', label: '混合办公' },
+]
 const CHANNEL_OPTIONS = ['', '内推', '官网投递', '猎头', '招聘平台', '校园招聘', '其他']
 const PRIORITY_OPTIONS = ['高', '中', '低']
 
@@ -53,9 +58,13 @@ function Select({ label, value, onChange, options }) {
         onChange={onChange}
         className="min-h-[40px] rounded-xl border border-white/10 bg-gray-950 px-4 py-2.5 text-sm font-medium text-white outline-none transition-all duration-200 focus:border-purple-400/70 focus:ring-2 focus:ring-purple-500/20 appearance-none cursor-pointer"
       >
-        {options.map((opt) => (
-          <option key={opt} value={opt} className="bg-gray-950 text-white">{opt}</option>
-        ))}
+        {options.map((opt) => {
+          const val = typeof opt === 'object' ? opt.value : opt
+          const label = typeof opt === 'object' ? opt.label : opt
+          return (
+            <option key={val} value={val} className="bg-gray-950 text-white">{label}</option>
+          )
+        })}
       </select>
     </div>
   )

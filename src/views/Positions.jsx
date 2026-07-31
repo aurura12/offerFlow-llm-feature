@@ -24,7 +24,7 @@ const statusColors = {
 function calcDays(dateStr) {
   if (!dateStr) return '-'
   const d = new Date(dateStr)
-  const now = new Date('2026-05-12')
+  const now = new Date()
   const diff = Math.floor((now - d) / (1000 * 60 * 60 * 24))
   return diff >= 0 ? diff : '-'
 }

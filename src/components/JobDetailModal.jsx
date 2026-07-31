@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useApp } from '../store/AppContext'
 import ModalHeader from './ModalHeader'
 import GlowCard from './GlowCard'
+import { WORK_MODE_LABELS } from './JobModal'
 
 const STATUS_ACTIONS = [
   { status: '已投递', label: '已投递', color: 'border-cyan-200 text-cyan-700 dark:text-cyan-300 bg-cyan-50 hover:bg-cyan-100' },
@@ -122,7 +123,7 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
             <div className="grid grid-cols-2 gap-2.5">
               <InfoRow label="城市" value={job.city || '-'} />
               <InfoRow label="薪资范围" value={job.salaryRange || '-'} />
-              <InfoRow label="工作模式" value={job.workMode || '-'} />
+              <InfoRow label="工作模式" value={job.workMode ? (WORK_MODE_LABELS[job.workMode.trim()] || job.workMode.trim()) : '-'} />
               <InfoRow label="投递渠道" value={job.channel || '-'} />
               <InfoRow label="优先级" value={job.priority || '-'} />
               <InfoRow label="投递日期" value={job.appliedDate || '-'} />
