@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useApp } from '../store/AppContext'
 import ModalHeader from './ModalHeader'
 import GlowCard from './GlowCard'
@@ -13,7 +13,6 @@ const WORK_MODE_OPTIONS = [
 ]
 const CHANNEL_OPTIONS = ['', '内推', '官网投递', '猎头', '招聘平台', '校园招聘', '其他']
 const PRIORITY_OPTIONS = ['高', '中', '低']
-const CITY_OPTIONS = [{ value: '', label: '请选择' }, '北京', '上海', '深圳', '杭州', '广州', '成都', '南京', '武汉', '西安', '合肥', '苏州', '长沙', '天津', '重庆', '厦门', '珠海']
 
 const emptyForm = {
   companyName: '', jobTitle: '', status: '感兴趣', city: '', salaryRange: '',
@@ -71,8 +70,56 @@ function Select({ label, value, onChange, options }) {
   )
 }
 
+function CityInput({ label, value, onChange, options }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  const filtered = useMemo(() => {
+    if (!value) return options
+    const kw = value.toLowerCase()
+    return options.filter((c) => c.toLowerCase().includes(kw))
+  }, [value, options])
+
+  useEffect(() => {
+    if (!open) return
+    function handleClick(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [open])
+
+  return (
+    <div ref={ref} className="relative">
+      <label className="text-sm text-offer-muted block mb-1">{label}</label>
+      <input
+        value={value}
+        onChange={(e) => { onChange(e.target.value); setOpen(true) }}
+        onFocus={() => setOpen(true)}
+        placeholder="选择或输入城市"
+        autoComplete="off"
+        className="min-h-[40px] w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 outline-none transition-all duration-200 focus:border-purple-400/70 focus:ring-2 focus:ring-purple-500/20"
+      />
+      {open && filtered.length > 0 && (
+        <ul className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg">
+          {filtered.map((city) => (
+            <li
+              key={city}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => { onChange(city); setOpen(false) }}
+              className="cursor-pointer px-4 py-2 text-sm text-slate-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+            >
+              {city}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 export default function JobModal({ open, job, onClose, initialStatus }) {
-  const { resumes, addToast, addJob, updateJob } = useApp()
+  const { resumes, cities, addCity, addToast, addJob, updateJob } = useApp()
   const [form, setForm] = useState(emptyForm)
 
   useEffect(() => {
@@ -100,6 +147,8 @@ export default function JobModal({ open, job, onClose, initialStatus }) {
       addToast('公司名称和岗位名称为必填项', 'error')
       return
     }
+
+    if (form.city?.trim()) addCity(form.city)
 
     if (job) {
       await updateJob(job.id, form)
@@ -139,7 +188,7 @@ export default function JobModal({ open, job, onClose, initialStatus }) {
             <Input label="岗位名称 *" value={form.jobTitle} onChange={(e) => handleChange('jobTitle', e.target.value)} placeholder="例如：高级后端工程师" />
 
             <Select label="当前状态" value={form.status} onChange={(e) => handleChange('status', e.target.value)} options={STATUS_OPTIONS} />
-            <Select label="城市" value={form.city ?? ''} onChange={(e) => handleChange('city', e.target.value)} options={CITY_OPTIONS} />
+            <CityInput label="城市" value={form.city ?? ''} onChange={(v) => handleChange('city', v)} options={cities} />
 
             <Input label="薪资范围" value={form.salaryRange} onChange={(e) => handleChange('salaryRange', e.target.value)} placeholder="例如：30K-50K" />
             <Select label="工作模式" value={form.workMode} onChange={(e) => handleChange('workMode', e.target.value)} options={WORK_MODE_OPTIONS} />

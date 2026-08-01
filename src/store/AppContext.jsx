@@ -8,6 +8,8 @@ import { useAuth } from './AuthContext'
 
 const AppContext = createContext(null)
 
+const DEFAULT_CITIES = ['北京', '上海', '深圳', '杭州', '广州', '成都', '南京', '武汉', '西安', '合肥', '苏州', '长沙', '天津', '重庆', '厦门', '珠海']
+
 const ROUND_ORDER = ['一面', '二面', '三面', '终面']
 const STATUS_ROUND_MAP = { '一面中': '一面', '二面中': '二面', '三面中': '三面', '终面中': '终面' }
 
@@ -153,6 +155,10 @@ export function AppProvider({ children }) {
   const [settings, setSettingsRaw] = useState(() => {
     if (typeof window === 'undefined') return defaultSettings
     return loadFromStorage('offerFlow_settings', defaultSettings)
+  })
+  const [cities, setCitiesRaw] = useState(() => {
+    if (typeof window === 'undefined') return DEFAULT_CITIES
+    return loadFromStorage('offerFlow_cities', DEFAULT_CITIES)
   })
   const [dataLoading, setDataLoading] = useState(true)
   const [toasts, setToasts] = useState([])
@@ -396,6 +402,26 @@ export function AppProvider({ children }) {
     })
   }, [])
 
+  // ---- Cities (localStorage only) ----
+  const setCities = useCallback((value) => {
+    setCitiesRaw((prev) => {
+      const next = typeof value === 'function' ? value(prev) : value
+      saveToStorage('offerFlow_cities', next)
+      return next
+    })
+  }, [])
+
+  const addCity = useCallback((city) => {
+    const name = (city || '').trim()
+    if (!name) return
+    setCitiesRaw((prev) => {
+      if (prev.includes(name)) return prev
+      const next = [...prev, name]
+      saveToStorage('offerFlow_cities', next)
+      return next
+    })
+  }, [])
+
   return (
     <AppContext.Provider value={{
       jobs, setJobs,
@@ -407,6 +433,7 @@ export function AppProvider({ children }) {
       addTask, updateTask, deleteTask,
       addReview, updateReview, deleteReview,
       settings, setSettings,
+      cities, setCities, addCity,
       toasts, addToast,
       dataLoading,
     }}>
