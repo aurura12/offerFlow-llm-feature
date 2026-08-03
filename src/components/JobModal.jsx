@@ -70,6 +70,27 @@ function Select({ label, value, onChange, options }) {
   )
 }
 
+function todayStr() {
+  return new Date().toISOString().slice(0, 10)
+}
+
+const FIELD_LABELS = {
+  companyName: '公司', jobTitle: '岗位', status: '状态', city: '城市',
+  salaryRange: '薪资', workMode: '工作模式', channel: '渠道', priority: '优先级',
+  appliedDate: '投递日期', jobLink: '链接', jdText: 'JD', resumeId: '简历',
+  contactName: '联系人', contactInfo: '联系方式', nextAction: '下一步', notes: '备注',
+}
+
+function formatFieldValue(val, resumes) {
+  if (!val) return ''
+  if (val in WORK_MODE_LABELS) return WORK_MODE_LABELS[val]
+  if (/^[a-f0-9-]{36}$/.test(val)) {
+    const r = resumes.find((x) => x.id === val)
+    if (r) return `${r.name} (${r.version})`
+  }
+  return val
+}
+
 function CityInput({ label, value, onChange, options }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
@@ -151,7 +172,24 @@ export default function JobModal({ open, job, onClose, initialStatus }) {
     if (form.city?.trim()) addCity(form.city)
 
     if (job) {
-      await updateJob(job.id, form)
+      const changed = []
+      for (const [key, label] of Object.entries(FIELD_LABELS)) {
+        const oldVal = (job[key] ?? '').toString().trim()
+        const newVal = (form[key] ?? '').toString().trim()
+        if (oldVal !== newVal) changed.push({ label, oldVal, newVal })
+      }
+      const detail = changed.length
+        ? changed.map((c) => `${c.label}: ${formatFieldValue(c.oldVal, resumes)} → ${formatFieldValue(c.newVal, resumes) || '(空)'}`).join('；')
+        : `更新了「${form.companyName} · ${form.jobTitle}」信息`
+
+      const patch = {
+        ...form,
+        timeline: [
+          ...(form.timeline || job.timeline || []),
+          { date: todayStr(), action: '编辑岗位', detail },
+        ],
+      }
+      await updateJob(job.id, patch)
       addToast('岗位已更新', 'success')
     } else {
       await addJob({ ...form, timeline: [] })
