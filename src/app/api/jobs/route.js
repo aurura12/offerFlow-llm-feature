@@ -25,7 +25,7 @@ export async function POST(request) {
       userId: user.id,
       companyName: companyName || '',
       jobTitle: jobTitle || '',
-      status: status || '感兴趣',
+      status: status || '已投递',
       city: city || '',
       salaryRange: salaryRange || '',
       workMode: workMode || '',

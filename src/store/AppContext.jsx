@@ -15,8 +15,8 @@ const STATUS_ROUND_MAP = { '一面中': '一面', '二面中': '二面', '三面
 
 // ---- Centralized statistics helpers ----
 
-export const APPLIED_STATUSES = ['已投递', 'OA / 笔试', '一面中', '二面中', '三面中', '终面中', 'Offer', '已结束']
-export const REPLIED_STATUSES = ['OA / 笔试', '一面中', '二面中', '三面中', '终面中', 'Offer']
+export const APPLIED_STATUSES = ['已投递', 'OA / 笔试', 'AI 面', '一面中', '二面中', '三面中', '终面中', 'Offer', '已结束']
+export const REPLIED_STATUSES = ['OA / 笔试', 'AI 面', '一面中', '二面中', '三面中', '终面中', 'Offer']
 export const INTERVIEW_STATUSES = ['一面中', '二面中', '三面中', '终面中']
 
 export function isAppliedJob(job) {
