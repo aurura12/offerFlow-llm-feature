@@ -17,10 +17,9 @@ const STATUS_ACTIONS = [
 ]
 
 const statusColors = {
-  '感兴趣': 'bg-blue-50 text-blue-700 dark:text-blue-300 border-blue-200',
-  '准备投递': 'bg-amber-50 text-amber-700 dark:text-amber-300 border-amber-200',
   '已投递': 'bg-cyan-50 text-cyan-700 dark:text-cyan-300 border-cyan-200',
   'OA / 笔试': 'bg-orange-50 text-orange-700 dark:text-orange-300 border-orange-200',
+  'AI 面': 'bg-teal-50 text-teal-700 dark:text-teal-300 border-teal-200',
   '一面中': 'bg-offer-primary/10 text-offer-accent border-offer-primary/30',
   '二面中': 'bg-indigo-50 text-indigo-700 dark:text-indigo-300 border-indigo-200',
   '三面中': 'bg-violet-50 text-violet-700 dark:text-violet-300 border-violet-200',

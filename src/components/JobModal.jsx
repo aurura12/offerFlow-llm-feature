@@ -4,7 +4,7 @@ import { useApp } from '../store/AppContext'
 import ModalHeader from './ModalHeader'
 import GlowCard from './GlowCard'
 
-const STATUS_OPTIONS = ['感兴趣', '准备投递', '已投递', 'OA / 笔试', '一面中', '二面中', '三面中', '终面中', 'Offer', '已结束']
+const STATUS_OPTIONS = ['已投递', 'OA / 笔试', 'AI 面', '一面中', '二面中', '三面中', '终面中', 'Offer', '已结束']
 export const WORK_MODE_LABELS = { onsite: '到岗', remote: '远程', hybrid: '混合办公' }
 const WORK_MODE_OPTIONS = [
   { value: 'onsite', label: '到岗' },
@@ -15,7 +15,7 @@ const CHANNEL_OPTIONS = ['', '内推', '官网投递', '猎头', '招聘平台',
 const PRIORITY_OPTIONS = ['高', '中', '低']
 
 const emptyForm = {
-  companyName: '', jobTitle: '', status: '感兴趣', city: '', salaryRange: '',
+  companyName: '', jobTitle: '', status: '已投递', city: '', salaryRange: '',
   workMode: 'onsite', channel: '', priority: '中', appliedDate: '',
   jobLink: '', jdText: '', resumeId: '', contactName: '', contactInfo: '',
   nextAction: '', notes: '',

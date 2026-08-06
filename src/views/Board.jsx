@@ -9,10 +9,9 @@ import GlowCard from '../components/GlowCard'
 import ActionMenuPortal from '../components/ActionMenuPortal'
 
 const COLUMNS = [
-  { key: '感兴趣', color: 'border-t-blue-500/40', headerColor: 'text-blue-400', bgColor: 'bg-blue-500/10' },
-  { key: '准备投递', color: 'border-t-amber-500/40', headerColor: 'text-amber-400', bgColor: 'bg-amber-500/10' },
   { key: '已投递', color: 'border-t-cyan-500/40', headerColor: 'text-cyan-400', bgColor: 'bg-cyan-500/10' },
   { key: 'OA / 笔试', color: 'border-t-orange-500/40', headerColor: 'text-orange-400', bgColor: 'bg-orange-500/10' },
+  { key: 'AI 面', color: 'border-t-teal-500/40', headerColor: 'text-teal-400', bgColor: 'bg-teal-500/10' },
   { key: '一面中', color: 'border-t-offer-primary/40', headerColor: 'text-offer-accent', bgColor: 'bg-offer-primary/10' },
   { key: '二面中', color: 'border-t-indigo-500/40', headerColor: 'text-indigo-400', bgColor: 'bg-indigo-500/10' },
   { key: '三面中', color: 'border-t-violet-500/40', headerColor: 'text-violet-400', bgColor: 'bg-violet-500/10' },
@@ -316,10 +315,9 @@ function Card({ job, resumeMap, menuOpen, onToggleMenu, onCloseMenu, onClick, on
     : 'text-gray-300 dark:text-white/65 bg-white/[0.04] border-white/10'
 
   const borderColorMap = {
-    '感兴趣': 'border-l-blue-500/60',
-    '准备投递': 'border-l-amber-500/60',
     '已投递': 'border-l-cyan-500/60',
     'OA / 笔试': 'border-l-orange-500/60',
+    'AI 面': 'border-l-teal-500/60',
     '一面中': 'border-l-offer-primary/60',
     '二面中': 'border-l-indigo-500/60',
     '三面中': 'border-l-violet-500/60',
