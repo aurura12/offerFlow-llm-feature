@@ -30,7 +30,7 @@ export function generateMockData() {
       ],
     },
     {
-      id: id(), companyName: 'Alibaba', jobTitle: '后端开发工程师', status: 'OA / 笔试',
+      id: id(), companyName: 'Alibaba', jobTitle: '后端开发工程师', status: '笔试/在线测评',
       city: '杭州', salaryRange: '30K-45K', workMode: ' onsite', channel: '官网投递',
       priority: '高', appliedDate: '2026-05-01', jobLink: '', jdText: '',
       resumeId: '', contactName: '', contactInfo: '',
@@ -112,7 +112,7 @@ export function generateMockData() {
       timeline: [],
     },
     {
-      id: id(), companyName: '快手', jobTitle: '后端架构师', status: 'OA / 笔试',
+      id: id(), companyName: '快手', jobTitle: '后端架构师', status: '笔试/在线测评',
       city: '北京', salaryRange: '40K-60K', workMode: ' hybrid', channel: '猎头',
       priority: '高', appliedDate: '2026-05-04', jobLink: '', jdText: '',
       resumeId: '', contactName: '张猎头', contactInfo: '微信: zlt',
@@ -211,7 +211,7 @@ export function generateMockData() {
 
   const tasks = [
     { id: id(), title: 'ByteDance 技术二面', type: '面试', date: '2026-05-14', startTime: '10:00', endTime: '11:00', priority: '高', done: false, jobId: jobs[0].id, notes: '准备系统设计' },
-    { id: id(), title: '完成 Alibaba 在线笔试', type: 'OA / 笔试', date: '2026-05-15', startTime: '23:59', endTime: '', priority: '高', done: false, jobId: jobs[1].id, notes: '算法 + 行测' },
+    { id: id(), title: '完成 Alibaba 在线笔试', type: '笔试/在线测评', date: '2026-05-15', startTime: '23:59', endTime: '', priority: '高', done: false, jobId: jobs[1].id, notes: '算法 + 行测' },
     { id: id(), title: '蚂蚁集团三面', type: '面试', date: '2026-05-13', startTime: '14:30', endTime: '15:30', priority: '高', done: false, jobId: jobs[11].id, notes: '主管面，准备BQ问题' },
     { id: id(), title: '快手笔试截止', type: 'Deadline', date: '2026-05-16', startTime: '23:59', endTime: '', priority: '中', done: false, jobId: jobs[9].id, notes: '2小时，4道算法' },
     { id: id(), title: '跟进 ByteDance 二面结果', type: 'Follow-up', date: '2026-05-15', startTime: '', endTime: '', priority: '中', done: false, jobId: jobs[0].id, notes: '发感谢信并询问后续' },

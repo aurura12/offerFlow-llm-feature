@@ -2,15 +2,15 @@
 import { useApp } from '../store/AppContext'
 
 export default function Dashboard() {
-  const { jobs, tasks, reviews } = useApp()
+  const { jobs, tasks, reviews, updateTask, addToast } = useApp()
 
   const activeJobs = jobs.filter((j) => !['已结束', 'Offer'].includes(j.status))
-  const interviewJobs = jobs.filter((j) => (j.interviewRounds || []).length > 0 || ['一面中', '二面中', '三面中', '终面中'].includes(j.status))
+  const interviewJobs = jobs.filter((j) => ['笔试/在线测评', 'AI 面试', '一面中', '二面中', '三面中', '终面中'].includes(j.status))
   const offerJobs = jobs.filter((j) => j.status === 'Offer')
   const weekJobs = jobs.filter((j) => {
     if (!j.appliedDate) return false
     const d = new Date(j.appliedDate)
-    const now = new Date('2026-05-12')
+    const now = new Date()
     const weekAgo = new Date(now)
     weekAgo.setDate(weekAgo.getDate() - 7)
     return d >= weekAgo
@@ -34,6 +34,11 @@ export default function Dashboard() {
 
   // Upcoming tasks
   const upcomingTasks = tasks.filter((t) => !t.done).slice(0, 4)
+
+  const markDone = async (id) => {
+    await updateTask(id, { done: true })
+    addToast('事项已完成', 'success')
+  }
 
   return (
     <div className="px-6 py-6 max-w-5xl">
@@ -83,12 +88,21 @@ export default function Dashboard() {
             {upcomingTasks.length > 0 ? upcomingTasks.map((t) => (
               <div key={t.id} className="flex items-start gap-3 pb-3 border-b border-white/10 last:border-0">
                 <div className={`w-2 h-2 rounded-full mt-2 shrink-0 ${
-                  t.type === '面试' ? 'bg-green-500' : t.type === 'OA / 笔试' || t.type === 'Deadline' ? 'bg-amber-500' : t.type === 'Follow-up' ? 'bg-teal-500' : 'bg-blue-500'
+                  t.type === '面试' ? 'bg-green-500' : t.type === '笔试/在线测评' || t.type === 'Deadline' ? 'bg-amber-500' : t.type === 'Follow-up' ? 'bg-teal-500' : 'bg-blue-500'
                 }`} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-white truncate">{t.title}</p>
                   <p className="text-xs text-gray-500 dark:text-white/45 mt-0.5">{t.date} {t.startTime || ''}</p>
                 </div>
+                <button
+                  onClick={() => markDone(t.id)}
+                  className="shrink-0 mt-1 w-5 h-5 rounded-full border border-white/20 hover:border-purple-400/60 hover:bg-purple-500/15 transition-colors flex items-center justify-center"
+                  title="标记完成"
+                >
+                  <svg className="w-3 h-3 text-white/30 hover:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
               </div>
             )) : (
               <div className="flex flex-col items-center justify-center py-8 text-gray-500 dark:text-white/45">

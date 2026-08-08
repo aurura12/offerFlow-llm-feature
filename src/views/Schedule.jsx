@@ -6,7 +6,7 @@ import ConfirmDialog from '../components/ConfirmDialog'
 
 const TYPE_STYLE = {
   '面试': 'bg-blue-50 text-blue-700 dark:text-blue-400 border-blue-200',
-  'OA / 笔试': 'bg-cyan-50 text-cyan-700 dark:text-cyan-400 border-cyan-200',
+  '笔试/在线测评': 'bg-cyan-50 text-cyan-700 dark:text-cyan-400 border-cyan-200',
   'Deadline': 'bg-red-50 text-red-700 dark:text-red-400 border-red-200',
   'Follow-up': 'bg-green-50 text-green-700 dark:text-green-400 border-green-200',
   '准备任务': 'bg-purple-50 text-purple-700 dark:text-purple-400 border-purple-200',
@@ -15,7 +15,7 @@ const TYPE_STYLE = {
 
 const TYPE_DOT = {
   '面试': 'bg-blue-500',
-  'OA / 笔试': 'bg-cyan-500',
+  '笔试/在线测评': 'bg-cyan-500',
   'Deadline': 'bg-red-500',
   'Follow-up': 'bg-green-500',
   '准备任务': 'bg-purple-500',

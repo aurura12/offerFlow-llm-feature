@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 const TYPE_BG = {
   '面试': 'bg-blue-50 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30',
-  'OA / 笔试': 'bg-cyan-50 text-cyan-700 dark:text-cyan-400 border-cyan-200 dark:border-cyan-500/30',
+  '笔试/在线测评': 'bg-cyan-50 text-cyan-700 dark:text-cyan-400 border-cyan-200 dark:border-cyan-500/30',
   'Deadline': 'bg-red-50 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/30',
   'Follow-up': 'bg-green-50 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/30',
   '准备任务': 'bg-purple-50 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-500/30',

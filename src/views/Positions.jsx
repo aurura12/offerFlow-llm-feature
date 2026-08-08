@@ -5,13 +5,13 @@ import JobModal from '../components/JobModal'
 import JobDetailModal from '../components/JobDetailModal'
 import ConfirmDialog from '../components/ConfirmDialog'
 
-const STATUS_OPTIONS = ['全部', '已投递', 'OA / 笔试', 'AI 面', '一面中', '二面中', '三面中', '终面中', 'Offer', '已结束']
+const STATUS_OPTIONS = ['全部', '已投递', '笔试/在线测评', 'AI 面试', '一面中', '二面中', '三面中', '终面中', 'Offer', '已结束']
 const PRIORITY_OPTIONS = ['全部', '高', '中', '低']
 
 const statusColors = {
   '已投递': 'bg-cyan-500/[0.15] text-cyan-700 dark:text-cyan-300 border-cyan-500/30',
-  'OA / 笔试': 'bg-orange-500/[0.15] text-orange-700 dark:text-orange-300 border-orange-500/30',
-  'AI 面': 'bg-teal-500/[0.15] text-teal-700 dark:text-teal-300 border-teal-500/30',
+  '笔试/在线测评': 'bg-orange-500/[0.15] text-orange-700 dark:text-orange-300 border-orange-500/30',
+  'AI 面试': 'bg-teal-500/[0.15] text-teal-700 dark:text-teal-300 border-teal-500/30',
   '一面中': 'bg-offer-primary/[0.15] text-offer-accent border-offer-primary/30',
   '二面中': 'bg-purple-500/[0.15] text-purple-700 dark:text-purple-300 border-purple-500/30',
   '三面中': 'bg-violet-500/[0.15] text-violet-700 dark:text-violet-300 border-violet-500/30',

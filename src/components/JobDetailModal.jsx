@@ -7,7 +7,7 @@ import { WORK_MODE_LABELS } from './JobModal'
 
 const STATUS_ACTIONS = [
   { status: '已投递', label: '已投递', color: 'border-cyan-200 text-cyan-700 dark:text-cyan-300 bg-cyan-50 hover:bg-cyan-100' },
-  { status: 'OA / 笔试', label: '收到 OA', color: 'border-orange-200 text-orange-700 dark:text-orange-300 bg-orange-50 hover:bg-orange-100' },
+  { status: '笔试/在线测评', label: '收到测评', color: 'border-orange-200 text-orange-700 dark:text-orange-300 bg-orange-50 hover:bg-orange-100' },
   { status: '一面中', label: '一面中', color: 'border-offer-primary/30 text-offer-accent bg-offer-primary/10 hover:bg-offer-primary/20' },
   { status: '二面中', label: '二面中', color: 'border-indigo-200 text-indigo-700 dark:text-indigo-300 bg-indigo-50 hover:bg-indigo-100' },
   { status: '三面中', label: '三面中', color: 'border-violet-200 text-violet-700 dark:text-violet-300 bg-violet-50 hover:bg-violet-100' },
@@ -18,8 +18,8 @@ const STATUS_ACTIONS = [
 
 const statusColors = {
   '已投递': 'bg-cyan-50 text-cyan-700 dark:text-cyan-300 border-cyan-200',
-  'OA / 笔试': 'bg-orange-50 text-orange-700 dark:text-orange-300 border-orange-200',
-  'AI 面': 'bg-teal-50 text-teal-700 dark:text-teal-300 border-teal-200',
+  '笔试/在线测评': 'bg-orange-50 text-orange-700 dark:text-orange-300 border-orange-200',
+  'AI 面试': 'bg-teal-50 text-teal-700 dark:text-teal-300 border-teal-200',
   '一面中': 'bg-offer-primary/10 text-offer-accent border-offer-primary/30',
   '二面中': 'bg-indigo-50 text-indigo-700 dark:text-indigo-300 border-indigo-200',
   '三面中': 'bg-violet-50 text-violet-700 dark:text-violet-300 border-violet-200',
@@ -310,7 +310,7 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
                 <div>
                   <label className="text-xs text-offer-muted block mb-1">类型</label>
                   <select value={taskForm.type} onChange={(e) => setTaskForm((p) => ({ ...p, type: e.target.value }))} className="min-h-[40px] rounded-xl border border-white/10 bg-gray-950 px-4 py-2.5 text-sm font-medium text-white outline-none transition-all duration-200 focus:border-purple-400/70 focus:ring-2 focus:ring-purple-500/20 appearance-none cursor-pointer">
-                    {['面试', 'OA / 笔试', 'Deadline', 'Follow-up', '准备任务', '其他'].map((o) => (
+                    {['面试', '笔试/在线测评', 'Deadline', 'Follow-up', '准备任务', '其他'].map((o) => (
                       <option key={o} className="bg-gray-950">{o}</option>
                     ))}
                   </select>

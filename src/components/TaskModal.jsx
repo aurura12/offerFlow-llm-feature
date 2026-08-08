@@ -15,6 +15,7 @@ export default function TaskModal({ open, task, defaultDate, onClose }) {
   const [priority, setPriority] = useState('中')
   const [jobId, setJobId] = useState('')
   const [notes, setNotes] = useState('')
+  const [done, setDone] = useState(false)
 
   useEffect(() => {
     if (!open) return
@@ -27,6 +28,7 @@ export default function TaskModal({ open, task, defaultDate, onClose }) {
       setPriority(task.priority || '中')
       setJobId(task.jobId || '')
       setNotes(task.notes || '')
+      setDone(task.done || false)
     } else {
       setTitle('')
       setType('其他')
@@ -36,6 +38,7 @@ export default function TaskModal({ open, task, defaultDate, onClose }) {
       setPriority('中')
       setJobId('')
       setNotes('')
+      setDone(false)
     }
   }, [open, task, defaultDate])
 
@@ -63,10 +66,10 @@ export default function TaskModal({ open, task, defaultDate, onClose }) {
   const handleSave = async () => {
     if (!title.trim()) { addToast('请输入事项标题', 'error'); return }
     if (task) {
-      await updateTask(task.id, { title: title.trim(), type, date, startTime, endTime, priority, jobId, notes })
+      await updateTask(task.id, { title: title.trim(), type, date, startTime, endTime, priority, jobId, notes, done })
       addToast('事项已更新', 'success')
     } else {
-      await addTask({ title: title.trim(), type, date, startTime, endTime, priority, jobId, notes })
+      await addTask({ title: title.trim(), type, date, startTime, endTime, priority, jobId, notes, done })
       addToast('事项已创建', 'success')
     }
     onClose()
@@ -94,7 +97,7 @@ export default function TaskModal({ open, task, defaultDate, onClose }) {
             <Field label="类型">
               <select value={type} onChange={(e) => setType(e.target.value)}
                 className="min-h-[40px] rounded-xl border border-white/10 bg-gray-950 px-4 py-2.5 text-sm font-medium text-white outline-none transition-all duration-200 focus:border-purple-400/70 focus:ring-2 focus:ring-purple-500/20 appearance-none cursor-pointer">
-                {['面试', 'OA / 笔试', 'Deadline', 'Follow-up', '准备任务', '其他'].map((o) => (
+                {['面试', '笔试/在线测评', 'Deadline', 'Follow-up', '准备任务', '其他'].map((o) => (
                   <option key={o} className="bg-gray-950">{o}</option>
                 ))}
               </select>
@@ -139,6 +142,12 @@ export default function TaskModal({ open, task, defaultDate, onClose }) {
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="备注信息..."
               className="min-h-[40px] w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 outline-none transition-all duration-200 focus:border-purple-400/70 focus:ring-2 focus:ring-purple-500/20 resize-none" />
           </Field>
+
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" checked={done} onChange={(e) => setDone(e.target.checked)}
+              className="w-4 h-4 rounded border-white/20 bg-white/[0.04] accent-purple-500" />
+            <span className="text-sm text-white">标记为已完成</span>
+          </label>
         </div>
 
         {/* Footer */}
