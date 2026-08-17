@@ -6,6 +6,7 @@ import GlowCard from './GlowCard'
 import { WORK_MODE_LABELS } from './JobModal'
 
 const STATUS_ACTIONS = [
+  { status: '待投递', label: '待投递', color: 'border-slate-200 text-slate-700 dark:text-slate-300 bg-slate-50 hover:bg-slate-100' },
   { status: '已投递', label: '已投递', color: 'border-cyan-200 text-cyan-700 dark:text-cyan-300 bg-cyan-50 hover:bg-cyan-100' },
   { status: '笔试/在线测评', label: '收到测评', color: 'border-orange-200 text-orange-700 dark:text-orange-300 bg-orange-50 hover:bg-orange-100' },
   { status: '一面中', label: '一面中', color: 'border-offer-primary/30 text-offer-accent bg-offer-primary/10 hover:bg-offer-primary/20' },
@@ -17,6 +18,7 @@ const STATUS_ACTIONS = [
 ]
 
 const statusColors = {
+  '待投递': 'bg-slate-50 text-slate-700 dark:text-slate-300 border-slate-200',
   '已投递': 'bg-cyan-50 text-cyan-700 dark:text-cyan-300 border-cyan-200',
   '笔试/在线测评': 'bg-orange-50 text-orange-700 dark:text-orange-300 border-orange-200',
   'AI 面试': 'bg-teal-50 text-teal-700 dark:text-teal-300 border-teal-200',

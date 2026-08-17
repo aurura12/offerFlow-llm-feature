@@ -9,6 +9,7 @@ import GlowCard from '../components/GlowCard'
 import ActionMenuPortal from '../components/ActionMenuPortal'
 
 const COLUMNS = [
+  { key: '待投递', color: 'border-t-slate-500/40', headerColor: 'text-slate-400', bgColor: 'bg-slate-500/10' },
   { key: '已投递', color: 'border-t-cyan-500/40', headerColor: 'text-cyan-400', bgColor: 'bg-cyan-500/10' },
   { key: '笔试/在线测评', color: 'border-t-orange-500/40', headerColor: 'text-orange-400', bgColor: 'bg-orange-500/10' },
   { key: 'AI 面试', color: 'border-t-teal-500/40', headerColor: 'text-teal-400', bgColor: 'bg-teal-500/10' },
@@ -315,6 +316,7 @@ function Card({ job, resumeMap, menuOpen, onToggleMenu, onCloseMenu, onClick, on
     : 'text-gray-300 dark:text-white/65 bg-white/[0.04] border-white/10'
 
   const borderColorMap = {
+    '待投递': 'border-l-slate-500/60',
     '已投递': 'border-l-cyan-500/60',
     '笔试/在线测评': 'border-l-orange-500/60',
     'AI 面试': 'border-l-teal-500/60',

@@ -112,6 +112,9 @@ function migrateJobs(jobs) {
     if (updated.status === '面试中') {
       updated.status = '一面中'
     }
+    if (updated.status === '准备投递') {
+      updated.status = '待投递'
+    }
     return syncInterviewRounds(updated)
   })
 }

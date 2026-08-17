@@ -4,7 +4,7 @@ import { useApp } from '../store/AppContext'
 import ModalHeader from './ModalHeader'
 import GlowCard from './GlowCard'
 
-const STATUS_OPTIONS = ['已投递', '笔试/在线测评', 'AI 面试', '一面中', '二面中', '三面中', '终面中', 'Offer', '已结束']
+const STATUS_OPTIONS = ['待投递', '已投递', '笔试/在线测评', 'AI 面试', '一面中', '二面中', '三面中', '终面中', 'Offer', '已结束']
 export const WORK_MODE_LABELS = { onsite: '到岗', remote: '远程', hybrid: '混合办公' }
 const WORK_MODE_OPTIONS = [
   { value: 'onsite', label: '到岗' },
