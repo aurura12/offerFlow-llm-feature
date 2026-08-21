@@ -191,6 +191,8 @@ npm run dev    # 启动时自动同步数据库（应用迁移 + 补入共享数
 > 2. `git add . && git commit -m "..." && git push`
 > 3. 钩子自动把 `dev.db` 导出到 `seed-data.json` 并一起提交，队友 pull 后启动 dev 就能看到
 >
+> **在 VS Code 里提交：** `npm run dev` 启动时会自动监视数据库文件，你每次在界面上改数据，`prisma/seed-data.json` 会实时更新，VS Code 的源代码管理面板里就能直接看到改动并点按钮提交，不需要敲任何命令。
+>
 > pre-commit 钩子由 `npm install` 自动启用（`git config core.hooksPath scripts/hooks`），代码在 `scripts/hooks/pre-commit`。钩子只负责导出数据，**永远不会阻塞代码提交**；万一导出失败会打印警告并照常提交。
 
 ### 注意事项
