@@ -184,13 +184,22 @@ export default function Board() {
       {/* Kanban Columns */}
       <div className="flex-1 flex gap-5 overflow-x-auto pb-4 min-h-0">
         {COLUMNS.map((col) => {
-          const colJobs = jobs.filter((j) => j.status === col.key)
+          const colJobs = jobs
+            .filter((j) => j.status === col.key)
+            .sort((a, b) => {
+              const ad = a.appliedDate || ''
+              const bd = b.appliedDate || ''
+              if (ad === bd) return 0
+              if (!ad) return 1 // 无投递日期沉底
+              if (!bd) return -1
+              return bd.localeCompare(ad) // 投递时间倒序，最新在最前
+            })
           const isDragOver = dragOverColumn === col.key
 
           return (
             <div
               key={col.key}
-              className="flex-1 min-w-[240px] max-w-[300px] flex flex-col"
+              className={`flex flex-col flex-1 ${col.key === '已投递' ? 'min-w-[460px] max-w-[640px]' : 'min-w-[240px] max-w-[300px]'}`}
               onDragOver={(e) => handleDragOver(e, col.key)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, col.key)}
@@ -214,7 +223,7 @@ export default function Board() {
                 </div>
 
                 {/* Cards */}
-                <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-3 min-h-[100px]">
+                <div className={`flex-1 overflow-y-auto px-4 pb-4 min-h-[100px] ${col.key === '已投递' ? 'grid grid-cols-2 gap-3' : 'flex flex-col space-y-3'}`}>
                   {colJobs.map((job) => (
                     <Card
                       key={job.id}

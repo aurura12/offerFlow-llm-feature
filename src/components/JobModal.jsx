@@ -192,7 +192,19 @@ export default function JobModal({ open, job, onClose, initialStatus }) {
       await updateJob(job.id, patch)
       addToast('岗位已更新', 'success')
     } else {
-      await addJob({ ...form, timeline: [] })
+      // 新增岗位时，未填写投递日期则默认今天，保证「本周投递」统计与按时间排序生效
+      const appliedDate = form.appliedDate?.trim() || todayStr()
+      await addJob({
+        ...form,
+        appliedDate,
+        timeline: [
+          {
+            date: appliedDate,
+            action: '投递简历',
+            detail: form.channel ? `通过${form.channel}投递` : '新增岗位',
+          },
+        ],
+      })
       addToast('岗位已新增', 'success')
     }
     onClose()
