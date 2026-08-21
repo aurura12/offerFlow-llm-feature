@@ -181,11 +181,17 @@ npm run dev    # 启动时自动同步数据库（应用迁移 + 补入共享数
 | 场景 | 命令 | 说明 |
 |------|------|------|
 | 拉代码后想看到队友的新数据 | 直接 `npm run dev` | 自动补入队友新增的数据（不会覆盖你的本地改动） |
+| **提交你的数据库改动** | **`git add .` → `git commit` → `git push`** | **不用任何额外命令**，pre-commit 钩子会自动把本地数据库导出并暂存 |
 | 需要完整覆盖同步（以 seed 为准） | `npm run db:setup` | 应用迁移 + 全量 upsert 覆盖 |
 | 改了表结构（加字段/表） | 改 `prisma/schema.sqlite.prisma` → `npm run db:sqlite` → `npm run db:migrate -- --name 改动说明` | 生成新的 migration，**提交 `prisma/migrations/`** |
-| 改了数据想共享给队友 | `npm run db:export` → 提交 `prisma/seed-data.json` | 队友下次 `npm run dev` 就能自动拿到新增数据 |
+| 只想导出不提交 | `npm run db:export` | 手动把本地数据导出为 `prisma/seed-data.json` |
 
-> 增量同步是"只补缺失、不覆盖"：队友 pull 后启动 dev，你新增的岗位/简历会自动出现在他本地，他本地自己改的内容不会被冲掉。想强制覆盖时用 `db:setup`。
+> **提交数据库改动的正确姿势（和以前完全一样）：**
+> 1. 改完数据（加了岗位/改了状态等）
+> 2. `git add . && git commit -m "..." && git push`
+> 3. 钩子自动把 `dev.db` 导出到 `seed-data.json` 并一起提交，队友 pull 后启动 dev 就能看到
+>
+> pre-commit 钩子由 `npm install` 自动启用（`git config core.hooksPath scripts/hooks`），代码在 `scripts/hooks/pre-commit`。钩子只负责导出数据，**永远不会阻塞代码提交**；万一导出失败会打印警告并照常提交。
 
 ### 注意事项
 

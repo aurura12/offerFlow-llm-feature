@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#
+# pre-commit 钩子：提交前自动把本地数据库导出为共享 seed 数据
+#
+# 效果：你不用记任何新命令，像以前一样
+#   git add . && git commit -m "xxx" && git push
+# 钩子会在 commit 时自动运行 `db:export`，把 prisma/seed-data.json 更新并暂存，
+# 让队友 pull 后启动 dev 就能看到你的数据库改动。
+#
+# 设计原则：绝不阻塞代码提交。导出失败时只警告、照常提交。
+# 通过 git config core.hooksPath scripts/hooks 启用（postinstall 会自动设置）。
+
+set -u
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+cd "$ROOT" || exit 1
+
+# 非必要环境缺失时跳过（允许纯代码/未初始化仓库提交）
+[ -f ".env" ] || exit 0
+[ -f "prisma/dev.db" ] || exit 0
+[ -d "node_modules/@prisma/client" ] || exit 0
+
+echo "[pre-commit] 正在把本地数据库导出为 seed-data.json ..."
+if node --env-file=.env scripts/export-seed.js; then
+  git add prisma/seed-data.json 2>/dev/null
+else
+  echo "[pre-commit] ⚠️ 数据库导出失败，本次提交继续，但 seed-data.json 未更新"
+  echo "[pre-commit]    常见原因：schema 已切换到 PostgreSQL、数据库被占用、或有待应用的迁移"
+fi
+
+exit 0
