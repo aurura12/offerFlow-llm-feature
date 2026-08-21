@@ -17,12 +17,12 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-echo [1/4] Node.js 版本：
+echo [1/5] Node.js 版本：
 node -v
 echo.
 
 :: 2. 安装依赖
-echo [2/4] 安装项目依赖...
+echo [2/5] 安装项目依赖...
 call npm install
 if %ERRORLEVEL% NEQ 0 (
     echo [提示] npm install 失败。如果网络超时，可尝试设置镜像源：
@@ -33,7 +33,7 @@ if %ERRORLEVEL% NEQ 0 (
 echo.
 
 :: 3. 切换到 SQLite 模式
-echo [3/4] 切换到 SQLite 本地数据库...
+echo [3/5] 切换到 SQLite 本地数据库...
 copy /Y prisma\schema.sqlite.prisma prisma\schema.prisma >nul
 
 echo 生成 Prisma 数据库客户端...
@@ -46,7 +46,7 @@ if %ERRORLEVEL% NEQ 0 (
 echo.
 
 :: 4. 初始化 .env（如不存在）
-echo [4/4] 检查环境配置文件...
+echo [4/5] 检查环境配置文件...
 if not exist .env (
     if exist .env.example (
         copy .env.example .env >nul
@@ -59,6 +59,16 @@ if not exist .env (
 ) else (
     echo .env 已存在，跳过。
 )
+
+:: 5. 创建本地数据库（建表）
+echo [5/5] 初始化本地数据库...
+call npx prisma db push
+if %ERRORLEVEL% NEQ 0 (
+    echo [错误] 数据库初始化失败
+    pause
+    exit /b 1
+)
+echo.
 
 echo.
 echo ============================================

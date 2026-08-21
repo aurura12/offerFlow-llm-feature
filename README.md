@@ -75,13 +75,16 @@ npm install
 # 3. 切换到 SQLite 模式
 npm run db:sqlite
 
-# 4. 配置环境变量
+# 4. 创建本地数据库（建表）
+npm run db:push
+
+# 5. 配置环境变量
 cp .env.example .env          # macOS/Linux
 copy .env.example .env         # Windows
 
-# 5. 编辑 .env，修改 JWT_SECRET 为随机字符串
+# 6. 编辑 .env，修改 JWT_SECRET 为随机字符串
 
-# 6. 启动
+# 7. 启动
 npm run dev
 ```
 
@@ -131,7 +134,7 @@ npm run dev
 确认 `npm run dev` 正常启动，访问 http://localhost:3000。如果端口被占用，Next.js 会自动尝试下一个可用端口。
 
 ### 注册失败或登录不了？
-确保 `.env` 文件中的 `JWT_SECRET` 已设置（任意随机字符串均可），且已执行 `npm run db:sqlite` 创建数据库。
+确保 `.env` 文件中的 `JWT_SECRET` 已设置（任意随机字符串均可），且已执行 `npm run db:push`（单用户）或 `npm run db:setup`（多开发者）创建数据库。
 
 ### AI 分析报错 "LLM_API_KEY 未配置"？
 进入「设置 → AI 模型配置」，填入你的 API Key 后保存，然后重新尝试分析。
@@ -152,7 +155,43 @@ npm run dev
 目前未针对移动端做完整适配，但核心功能在手机浏览器上基本可用。
 
 ### 多人如何共享数据？
-本项目为单用户设计，数据按用户 ID 隔离。如需多人共享，可自行搭建 PostgreSQL 部署到服务器。
+
+多人协作开发时，**不要提交 `prisma/dev.db` 数据库文件**（它是二进制文件，git 无法合并，谁后提交就整个覆盖谁的改动）。改用「migration 同步表结构 + seed 同步数据」，详见下方 [多开发者协作（数据库同步）](#多开发者协作数据库同步) 一节。
+
+---
+
+## 多开发者协作（数据库同步）
+
+多人同时开发时，SQLite 数据库文件 `prisma/dev.db` 已加入 `.gitignore`，**不再提交到仓库**。改由 git 里可正常合并的文本文件来同步：
+
+- `prisma/migrations/`：表结构变更（migration，文本 SQL）
+- `prisma/seed-data.json` + `prisma/seed.js`：共享的示例/基础数据
+
+### 首次克隆或拉取代码后
+
+```bash
+npm install
+npm run db:setup    # 切换到 SQLite 模式 + 应用迁移建表 + 导入 seed 数据
+npm run dev
+```
+
+`db:setup` 等于依次执行：`db:sqlite` → `prisma migrate deploy` → `prisma db seed`。
+
+### 日常协作流程
+
+| 场景 | 命令 | 说明 |
+|------|------|------|
+| 拉取代码后同步 | `npm run db:setup` | 应用别人新加的迁移，并把最新 seed 数据导入 |
+| 改了表结构（加字段/表） | 改 `prisma/schema.sqlite.prisma` → `npm run db:sqlite` → `npm run db:migrate -- --name 改动说明` | 生成新的 migration，**提交 `prisma/migrations/`** |
+| 改了数据想共享给队友 | `npm run db:export` → 提交 `prisma/seed-data.json` | 把本地数据导出为共享数据，队友 `npm run db:seed` 即可 |
+| 只刷共享数据 | `npm run db:seed` | 幂等，重复执行不会产生重复数据 |
+
+### 注意事项
+
+- **永远不要 `git add prisma/dev.db`**，它已被 `.gitignore` 忽略。
+- 数据以你自己本地 `dev.db` 为准，seed 数据只用来同步「想要共享的那部分」。
+- 生产部署（PostgreSQL）不受影响：Vercel 构建不会执行本地 migration，数据库仍按原有方式管理。
+- 导出 seed 数据前，确认里面没有不想公开的敏感信息（用户密码是 bcrypt 哈希，可安全共享）。
 
 ---
 

@@ -11,9 +11,14 @@
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
+    "db:setup": "npm run db:sqlite && node scripts/db-setup.js && prisma db seed",
+    "db:export": "node scripts/export-seed.js",
     "db:studio": "prisma studio",
-    "db:sqlite": "node -e \"require('fs').copyFileSync('prisma/schema.sqlite.prisma','prisma/schema.prisma');require('fs').copyFileSync('.env.sqlite','.env')\" && prisma generate && echo Switched to SQLite (local dev)",
-    "db:pg": "node -e \"require('fs').copyFileSync('prisma/schema.pg.prisma','prisma/schema.prisma');require('fs').copyFileSync('.env.pg','.env')\" && prisma generate && echo Switched to PostgreSQL (Vercel deploy)"
+    "db:sqlite": "node -e \"require('fs').copyFileSync('prisma/schema.sqlite.prisma','prisma/schema.prisma');require('fs').copyFileSync('.env.sqlite','.env')\" && prisma generate && echo \"Switched to SQLite (local dev)\"",
+    "db:pg": "node -e \"require('fs').copyFileSync('prisma/schema.pg.prisma','prisma/schema.prisma');require('fs').copyFileSync('.env.pg','.env')\" && prisma generate && echo \"Switched to PostgreSQL (Vercel deploy)\""
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
@@ -36,5 +41,8 @@
     "globals": "^17.6.0",
     "playwright": "^1.60.0",
     "prisma": "^6.5.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }
