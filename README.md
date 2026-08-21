@@ -171,20 +171,21 @@ npm run dev
 
 ```bash
 npm install
-npm run db:setup    # 切换到 SQLite 模式 + 应用迁移建表 + 导入 seed 数据
-npm run dev
+npm run dev    # 启动时自动同步数据库（应用迁移 + 补入共享数据），不需要手动操作
 ```
 
-`db:setup` 等于依次执行：`db:sqlite` → `prisma migrate deploy` → `prisma db seed`。
+`npm run dev` 会自动执行 `scripts/predev.js`：确保 SQLite 配置 → 应用未执行的迁移 → 增量导入共享数据。
 
 ### 日常协作流程
 
 | 场景 | 命令 | 说明 |
 |------|------|------|
-| 拉取代码后同步 | `npm run db:setup` | 应用别人新加的迁移，并把最新 seed 数据导入 |
+| 拉代码后想看到队友的新数据 | 直接 `npm run dev` | 自动补入队友新增的数据（不会覆盖你的本地改动） |
+| 需要完整覆盖同步（以 seed 为准） | `npm run db:setup` | 应用迁移 + 全量 upsert 覆盖 |
 | 改了表结构（加字段/表） | 改 `prisma/schema.sqlite.prisma` → `npm run db:sqlite` → `npm run db:migrate -- --name 改动说明` | 生成新的 migration，**提交 `prisma/migrations/`** |
-| 改了数据想共享给队友 | `npm run db:export` → 提交 `prisma/seed-data.json` | 把本地数据导出为共享数据，队友 `npm run db:seed` 即可 |
-| 只刷共享数据 | `npm run db:seed` | 幂等，重复执行不会产生重复数据 |
+| 改了数据想共享给队友 | `npm run db:export` → 提交 `prisma/seed-data.json` | 队友下次 `npm run dev` 就能自动拿到新增数据 |
+
+> 增量同步是"只补缺失、不覆盖"：队友 pull 后启动 dev，你新增的岗位/简历会自动出现在他本地，他本地自己改的内容不会被冲掉。想强制覆盖时用 `db:setup`。
 
 ### 注意事项
 
