@@ -2045,7 +2045,7 @@
       "workMode": "onsite",
       "channel": "",
       "priority": "中",
-      "appliedDate": "2026-08-19",
+      "appliedDate": "2026-08-18",
       "jobLink": "https://job.byd.com/portal/pc/#/personalCenter/myApply",
       "jdText": "",
       "resumeId": null,
@@ -2060,6 +2060,11 @@
           "date": "2026-08-21",
           "action": "编辑岗位",
           "detail": "投递日期:  → 2026-08-19"
+        },
+        {
+          "date": "2026-08-21",
+          "action": "编辑岗位",
+          "detail": "投递日期: 2026-08-19 → 2026-08-18"
         }
       ],
       "createdAt": "2026-08-19T09:41:02.234Z",
