@@ -177,6 +177,7 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
           </section>
 
           {/* Offer comparison data */}
+          {job.status === 'Offer' && (
           <section className="rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.04] p-4">
             <div className="flex items-start justify-between gap-3 mb-3">
               <div>
@@ -208,6 +209,7 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
               <button onClick={saveOffer} className="btn-gradient px-3 py-1.5 rounded-lg text-xs font-medium text-white">保存 Offer</button>
             </div>
           </section>
+          )}
 
           {/* Contact */}
           {(job.contactName || job.contactInfo) && (
