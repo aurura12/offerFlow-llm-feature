@@ -31,8 +31,8 @@ export default function Offers() {
     <div className="px-6 py-6 max-w-6xl">
       <div className="flex items-start justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Offer 对比</h1>
-          <p className="text-sm text-gray-400 dark:text-white/45 mt-1">只比较国内岗位，先把关键条件放在一起看</p>
+          <h1 className="text-3xl font-bold tracking-tight text-theme-text">Offer 对比</h1>
+          <p className="text-sm text-theme-secondary mt-1">只比较国内岗位，先把关键条件放在一起看</p>
         </div>
         <button onClick={() => router.push('/positions')} className="btn-secondary px-4 py-2 rounded-xl text-sm font-medium shrink-0">
           去岗位库添加
@@ -42,8 +42,8 @@ export default function Offers() {
       {offerItems.length === 0 ? (
         <div className="card-modern p-10 text-center">
           <div className="text-4xl mb-3">☆</div>
-          <h2 className="text-lg font-semibold text-white">还没有可比较的 Offer</h2>
-          <p className="text-sm text-white/45 mt-2">把岗位状态改成「Offer」，或在岗位详情里填写 Offer 条件。</p>
+          <h2 className="text-lg font-semibold text-theme-text">还没有可比较的 Offer</h2>
+          <p className="text-sm text-theme-secondary mt-2">把岗位状态改成「Offer」，或在岗位详情里填写 Offer 条件。</p>
           <button onClick={() => router.push('/positions')} className="btn-gradient mt-5 px-4 py-2 rounded-xl text-sm font-medium text-white">
             打开岗位库
           </button>
@@ -67,10 +67,10 @@ export default function Offers() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-lg font-semibold text-white truncate">{job.companyName || '未填写公司'}</p>
-                    <p className="text-sm text-white/60 mt-1 truncate">{job.jobTitle || '未填写岗位'}</p>
+                    <p className="text-lg font-semibold text-theme-text truncate">{job.companyName || '未填写公司'}</p>
+                    <p className="text-sm text-theme-secondary mt-1 truncate">{job.jobTitle || '未填写岗位'}</p>
                   </div>
-                  <span className="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2.5 py-1 text-xs text-emerald-300 shrink-0">
+                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/[0.15] px-2.5 py-1 text-xs text-emerald-700 dark:text-emerald-300 shrink-0">
                     {job.status}
                   </span>
                 </div>
@@ -85,7 +85,7 @@ export default function Offers() {
                 </div>
 
                 {(offer?.benefits || offer?.notes) && (
-                  <p className="mt-4 pt-3 border-t border-white/10 text-xs text-white/55 line-clamp-2">
+                  <p className="mt-4 pt-3 border-t border-theme-border text-xs text-theme-secondary line-clamp-2">
                     {offer.benefits || offer.notes}
                   </p>
                 )}
@@ -109,17 +109,17 @@ export default function Offers() {
 function Summary({ label, value }) {
   return (
     <div className="card-modern p-4">
-      <p className="text-xs text-white/45">{label}</p>
-      <p className="text-xl font-semibold text-white mt-1">{value}</p>
+      <p className="text-xs text-theme-muted">{label}</p>
+      <p className="text-xl font-semibold text-theme-text mt-1">{value}</p>
     </div>
   )
 }
 
 function OfferField({ label, value, emphasized = false }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-      <p className="text-xs text-white/45">{label}</p>
-      <p className={`text-sm mt-1 ${emphasized ? 'text-emerald-300 font-semibold' : 'text-white/85'}`}>{value}</p>
+    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/[0.03]">
+      <p className="text-xs text-theme-muted">{label}</p>
+      <p className={`text-sm mt-1 ${emphasized ? 'text-emerald-600 dark:text-emerald-300 font-semibold' : 'text-slate-800 dark:text-white/85'}`}>{value}</p>
     </div>
   )
 }

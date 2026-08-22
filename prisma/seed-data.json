@@ -319,7 +319,7 @@
       "userId": "cms8jcs5s0000umz0ofrngaa0",
       "companyName": "韶音",
       "jobTitle": "嵌入式",
-      "status": "三面中",
+      "status": "Offer",
       "city": "深圳",
       "salaryRange": "20k",
       "workMode": null,
@@ -380,7 +380,7 @@
         }
       ],
       "createdAt": "2026-07-31T07:16:44.442Z",
-      "updatedAt": "2026-07-31T12:15:00.916Z"
+      "updatedAt": "2026-08-22T07:19:46.708Z"
     },
     {
       "id": "cms8m06570005uma01vx8nqre",
@@ -2129,6 +2129,18 @@
       "fromStatus": null,
       "toStatus": null,
       "createdAt": "2026-08-22T04:08:18.748Z"
+    },
+    {
+      "id": "cmt41stg60001mvq3h81pv7y6",
+      "userId": "cms8jcs5s0000umz0ofrngaa0",
+      "jobId": "cms8m06570004uma0noci2l4c",
+      "type": "STATUS_CHANGED",
+      "title": "状态变更",
+      "eventDate": "2026-08-22",
+      "notes": null,
+      "fromStatus": "三面中",
+      "toStatus": "Offer",
+      "createdAt": "2026-08-22T07:19:46.710Z"
     },
     {
       "id": "legacy-cms8m06570004uma0noci2l4c-0",
