@@ -40,3 +40,6 @@ run('node scripts/db-setup.js')
 if (fs.existsSync(path.join(root, 'prisma', 'seed-data.json'))) {
   run('node prisma/seed.js --additive')
 }
+
+// 4. 将旧 Job.timeline JSON 幂等迁移到 JobEvent
+run('node scripts/migrate-job-timelines.js')

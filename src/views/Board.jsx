@@ -7,6 +7,7 @@ import ConfirmDialog from '../components/ConfirmDialog'
 import ModalHeader from '../components/ModalHeader'
 import GlowCard from '../components/GlowCard'
 import ActionMenuPortal from '../components/ActionMenuPortal'
+import { groupJobsByCompany } from '../lib/jobGroups'
 
 const COLUMNS = [
   { key: '待投递', color: 'border-t-slate-500/40', headerColor: 'text-slate-400', bgColor: 'bg-slate-500/10' },
@@ -81,14 +82,8 @@ export default function Board() {
     const job = jobs.find((j) => j.id === jobId)
     if (!job || job.status === targetStatus) return
 
-    const timeline = job.timeline || []
     await updateJob(jobId, {
       status: targetStatus,
-      timeline: [...timeline, {
-        date: new Date().toISOString().slice(0, 10),
-        action: '状态变更',
-        detail: `从 ${job.status} 更新为 ${targetStatus}`,
-      }],
     })
     addToast(`状态已更新`, 'success')
     dragJobId.current = null
@@ -141,14 +136,8 @@ export default function Board() {
   const markAs = async (job, newStatus, label, e) => {
     if (e) e.stopPropagation()
     setMenuJobId(null)
-    const timeline = job.timeline || []
     await updateJob(job.id, {
       status: newStatus,
-      timeline: [...timeline, {
-        date: new Date().toISOString().slice(0, 10),
-        action: `标记为 ${label}`,
-        detail: newStatus === '已结束' ? '' : '',
-      }],
     })
     addToast(`已标记为「${label}」`, 'success')
   }
@@ -194,6 +183,7 @@ export default function Board() {
               if (!bd) return -1
               return bd.localeCompare(ad) // 投递时间倒序，最新在最前
             })
+          const companyGroups = groupJobsByCompany(colJobs)
           const isDragOver = dragOverColumn === col.key
 
           return (
@@ -224,24 +214,34 @@ export default function Board() {
 
                 {/* Cards */}
                 <div className={`flex-1 overflow-y-auto px-4 pb-4 min-h-[100px] ${col.key === '已投递' ? 'grid grid-cols-2 gap-3' : 'flex flex-col space-y-3'}`}>
-                  {colJobs.map((job) => (
-                    <Card
-                      key={job.id}
-                      job={job}
-                      resumeMap={resumeMap}
-                      menuOpen={menuJobId === job.id}
-                      onToggleMenu={(e) => { e.stopPropagation(); setMenuJobId(menuJobId === job.id ? null : job.id) }}
-                      onCloseMenu={() => setMenuJobId(null)}
-                      onClick={() => openDetail(job)}
-                      onDragStart={(e) => handleDragStart(e, job.id)}
-                      onDragEnd={handleDragEnd}
-                      onEdit={(e) => openEdit(job, e)}
-                      onEditFromMenu={(e) => openEdit(job, e)}
-                      onDelete={(e) => requestDelete(job, e)}
-                      onMarkOffer={(e) => markAs(job, 'Offer', 'Offer', e)}
-                      onMarkEnded={(e) => markAs(job, '已结束', '已结束', e)}
-                      onFollowUp={(e) => openFollowUp(job, e)}
-                    />
+                  {companyGroups.map((group) => (
+                    <div key={group.company} className={col.key === '已投递' && group.jobs.length > 1 ? 'col-span-2 space-y-2' : 'space-y-2'}>
+                      {group.jobs.length > 1 && (
+                        <div className="flex items-center gap-2 px-1 text-[11px] font-medium text-white/45">
+                          <span>{group.company}</span>
+                          <span className="rounded-full bg-white/[0.06] px-1.5 py-0.5">{group.jobs.length} 个岗位</span>
+                        </div>
+                      )}
+                      {group.jobs.map((job) => (
+                        <Card
+                          key={job.id}
+                          job={job}
+                          resumeMap={resumeMap}
+                          menuOpen={menuJobId === job.id}
+                          onToggleMenu={(e) => { e.stopPropagation(); setMenuJobId(menuJobId === job.id ? null : job.id) }}
+                          onCloseMenu={() => setMenuJobId(null)}
+                          onClick={() => openDetail(job)}
+                          onDragStart={(e) => handleDragStart(e, job.id)}
+                          onDragEnd={handleDragEnd}
+                          onEdit={(e) => openEdit(job, e)}
+                          onEditFromMenu={(e) => openEdit(job, e)}
+                          onDelete={(e) => requestDelete(job, e)}
+                          onMarkOffer={(e) => markAs(job, 'Offer', 'Offer', e)}
+                          onMarkEnded={(e) => markAs(job, '已结束', '已结束', e)}
+                          onFollowUp={(e) => openFollowUp(job, e)}
+                        />
+                      ))}
+                    </div>
                   ))}
                   {colJobs.length === 0 && (
                     <div className="py-8 text-center text-offer-muted text-xs">拖拽或点击 + 添加</div>

@@ -27,6 +27,7 @@ const counts = {
   users: data.users.length,
   resumes: data.resumes.length,
   jobs: data.jobs.length,
+  jobEvents: (data.jobEvents || []).length,
   tasks: data.tasks.length,
   reviews: data.reviews.length,
 }
@@ -51,22 +52,23 @@ async function additiveSync(model, rows) {
   }
 }
 
-// 按外键依赖顺序导入：users -> resumes -> jobs -> tasks -> reviews
+// 按外键依赖顺序导入：users -> resumes -> jobs -> jobEvents -> tasks -> reviews
 if (isAdditive) {
   console.log('增量模式：只补缺失数据，不覆盖本地改动')
-  for (const model of ['user', 'resume', 'job', 'task', 'review']) {
-    await additiveSync(model, data[`${model}s`])
+  for (const model of ['user', 'resume', 'job', 'jobEvent', 'task', 'review']) {
+    await additiveSync(model, data[`${model}s`] || [])
   }
 } else {
   await upsertAll('user', data.users)
   await upsertAll('resume', data.resumes)
   await upsertAll('job', data.jobs)
+  await upsertAll('jobEvent', data.jobEvents || [])
   await upsertAll('task', data.tasks)
   await upsertAll('review', data.reviews)
 }
 
 console.log(
-  `✅ Seed 完成: users ${counts.users} / resumes ${counts.resumes} / jobs ${counts.jobs} / tasks ${counts.tasks} / reviews ${counts.reviews}`
+  `✅ Seed 完成: users ${counts.users} / resumes ${counts.resumes} / jobs ${counts.jobs} / jobEvents ${counts.jobEvents} / tasks ${counts.tasks} / reviews ${counts.reviews}`
 )
 
 await prisma.$disconnect()

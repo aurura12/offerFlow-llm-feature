@@ -4,6 +4,7 @@ import { useApp } from '../store/AppContext'
 import JobModal from '../components/JobModal'
 import JobDetailModal from '../components/JobDetailModal'
 import ConfirmDialog from '../components/ConfirmDialog'
+import { buildCompanyPrefill, groupJobsByCompany } from '../lib/jobGroups'
 
 const STATUS_OPTIONS = ['全部', '待投递', '已投递', '笔试/在线测评', 'AI 面试', '一面中', '二面中', '三面中', '终面中', 'Offer', '已结束']
 const PRIORITY_OPTIONS = ['全部', '高', '中', '低']
@@ -45,6 +46,7 @@ export default function Positions() {
   // Modal state
   const [modalOpen, setModalOpen] = useState(false)
   const [editingJob, setEditingJob] = useState(null)
+  const [newJobInitialValues, setNewJobInitialValues] = useState(null)
   const [detailJobId, setDetailJobId] = useState(null)
 
   // Confirm dialog state
@@ -81,27 +83,7 @@ export default function Positions() {
 
   // Group filtered jobs by company for grouped table display
   const groupedJobs = useMemo(() => {
-    const groups = {}
-    filteredJobs.forEach((job) => {
-      const company = job.companyName || '未填写公司'
-      if (!groups[company]) groups[company] = []
-      groups[company].push(job)
-    })
-    return Object.entries(groups)
-      .sort(([, a], [, b]) => {
-        const aMax = Math.max(...a.map(j => new Date(j.appliedDate || 0).getTime()))
-        const bMax = Math.max(...b.map(j => new Date(j.appliedDate || 0).getTime()))
-        if (aMax !== bMax) return bMax - aMax
-        return b[0].companyName?.localeCompare(a[0].companyName || '') || 0
-      })
-      .map(([company, jobs]) => ({
-        company,
-        jobs: jobs.sort((a, b) => {
-          const aDate = a.appliedDate || ''
-          const bDate = b.appliedDate || ''
-          return bDate.localeCompare(aDate) || a.jobTitle?.localeCompare(b.jobTitle || '') || 0
-        }),
-      }))
+    return groupJobsByCompany(filteredJobs)
   }, [filteredJobs])
 
   // Resume name lookup
@@ -127,6 +109,13 @@ export default function Positions() {
   // CRUD handlers
   const openAdd = () => {
     setEditingJob(null)
+    setNewJobInitialValues(null)
+    setModalOpen(true)
+  }
+
+  const openAddForCompany = (job) => {
+    setEditingJob(null)
+    setNewJobInitialValues(buildCompanyPrefill(job))
     setModalOpen(true)
   }
 
@@ -153,6 +142,7 @@ export default function Positions() {
   const handleCloseModal = () => {
     setModalOpen(false)
     setEditingJob(null)
+    setNewJobInitialValues(null)
   }
 
   const requestDelete = (job) => {
@@ -399,6 +389,12 @@ export default function Positions() {
                               <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-purple-500/10 px-2.5 py-0.5 text-xs text-purple-300 font-medium">
                                 {jobs.length} 个岗位
                               </div>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); openAddForCompany(jobs[0]) }}
+                                className="mt-2 block text-xs font-medium text-offer-accent hover:text-white transition-colors"
+                              >
+                                + 同公司新岗位
+                              </button>
                             </div>
                           </div>
                         </td>
@@ -475,7 +471,7 @@ export default function Positions() {
         onEdit={handleEditFromDetail}
         onDelete={handleDeleteFromDetail}
       />
-      <JobModal open={modalOpen} job={editingJob} onClose={handleCloseModal} />
+      <JobModal open={modalOpen} job={editingJob} initialValues={newJobInitialValues} onClose={handleCloseModal} />
       <ConfirmDialog
         open={confirmOpen}
         title="确认删除"

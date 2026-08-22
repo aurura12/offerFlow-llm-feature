@@ -261,7 +261,11 @@ export function AppProvider({ children }) {
   const addJob = useCallback(async (formData) => {
     try {
       const result = await apiFetch('/api/jobs', { method: 'POST', body: JSON.stringify(formData) })
-      const newJob = syncInterviewRounds({ ...formData, ...result.job })
+      const newJob = syncInterviewRounds({
+        ...formData,
+        ...result.job,
+        events: result.job?.events || (result.event ? [result.event] : []),
+      })
       setJobs((prev) => [...prev, newJob])
       return newJob
     } catch (err) {
@@ -271,8 +275,44 @@ export function AppProvider({ children }) {
 
   const updateJob = useCallback(async (id, patch) => {
     try {
-      await apiFetch('/api/jobs', { method: 'PUT', body: JSON.stringify({ id, ...patch }) })
-      setJobs((prev) => prev.map((j) => j.id === id ? syncInterviewRounds({ ...j, ...patch }) : j))
+      const result = await apiFetch('/api/jobs', { method: 'PUT', body: JSON.stringify({ id, ...patch }) })
+      setJobs((prev) => prev.map((j) => {
+        if (j.id !== id) return j
+        const nextEvents = result.event
+          ? [...(j.events || []), result.event]
+          : (result.job?.events ?? j.events)
+        return syncInterviewRounds({ ...j, ...patch, ...result.job, events: nextEvents })
+      }))
+    } catch (err) {
+      addToast(err.message, 'error')
+    }
+  }, [setJobs, addToast])
+
+  const addJobEvent = useCallback(async (jobId, eventData) => {
+    try {
+      const result = await apiFetch(`/api/jobs/${jobId}/events`, {
+        method: 'POST',
+        body: JSON.stringify(eventData),
+      })
+      setJobs((prev) => prev.map((job) =>
+        job.id === jobId
+          ? { ...job, events: [...(job.events || []), result.event] }
+          : job,
+      ))
+      return result.event
+    } catch (err) {
+      addToast(err.message, 'error')
+    }
+  }, [setJobs, addToast])
+
+  const deleteJobEvent = useCallback(async (jobId, eventId) => {
+    try {
+      await apiFetch(`/api/jobs/${jobId}/events/${eventId}`, { method: 'DELETE' })
+      setJobs((prev) => prev.map((job) =>
+        job.id === jobId
+          ? { ...job, events: (job.events || []).filter((event) => event.id !== eventId) }
+          : job,
+      ))
     } catch (err) {
       addToast(err.message, 'error')
     }
@@ -432,6 +472,7 @@ export function AppProvider({ children }) {
       tasks, setTasks,
       reviews, setReviews,
       addJob, updateJob, deleteJob,
+      addJobEvent, deleteJobEvent,
       addResume, updateResume, deleteResume,
       addTask, updateTask, deleteTask,
       addReview, updateReview, deleteReview,

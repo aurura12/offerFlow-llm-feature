@@ -1,5 +1,6 @@
 'use client'
 import { useApp } from '../store/AppContext'
+import { getJobEvents, sortJobEvents } from '../lib/jobTimeline'
 
 export default function Dashboard() {
   const { jobs, tasks, reviews, updateTask, addToast } = useApp()
@@ -27,9 +28,13 @@ export default function Dashboard() {
   ]
 
   // Recent timeline entries across all active jobs
-  const timelineEvents = jobs
-    .flatMap((j) => (j.timeline || []).map((t) => ({ ...t, company: j.companyName })))
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
+  const timelineEvents = sortJobEvents(jobs
+    .flatMap((j) => getJobEvents(j).map((event) => ({
+      ...event,
+      action: event.title,
+      date: event.eventDate,
+      company: j.companyName,
+    }))))
     .slice(0, 6)
 
   // Upcoming tasks

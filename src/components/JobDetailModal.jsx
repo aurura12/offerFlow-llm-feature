@@ -4,6 +4,7 @@ import { useApp } from '../store/AppContext'
 import ModalHeader from './ModalHeader'
 import GlowCard from './GlowCard'
 import { WORK_MODE_LABELS } from './JobModal'
+import JobTimeline from './JobTimeline'
 
 const STATUS_ACTIONS = [
   { status: '待投递', label: '待投递', color: 'border-slate-200 text-slate-700 dark:text-slate-300 bg-slate-50 hover:bg-slate-100' },
@@ -35,7 +36,7 @@ function todayStr() {
 }
 
 export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete }) {
-  const { jobs, resumes, addToast, updateJob, addTask, addReview } = useApp()
+  const { jobs, resumes, addToast, updateJob, addJobEvent, deleteJobEvent, addTask, addReview } = useApp()
   const job = jobs.find((j) => j.id === jobId)
 
   // Sub-dialog state
@@ -63,7 +64,6 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
     if (!existing) return
     await updateJob(jobId, {
       status: newStatus,
-      timeline: [...(existing.timeline || []), { date: todayStr(), action: `标记为 ${label}`, detail: `从 ${existing.status} 更新为 ${newStatus}` }],
       endReason: newStatus === '已结束' && !existing.endReason ? '手动标记' : existing.endReason,
     })
     addToast(`已标记为「${label}」`, 'success')
@@ -254,23 +254,11 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
             </section>
           )}
 
-          {/* Timeline */}
-          <section>
-            <h3 className="text-xs font-semibold text-white/45 uppercase tracking-wider mb-3">时间线</h3>
-            <div className="relative pl-4 border-l border-slate-200 dark:border-white/[0.06] space-y-4">
-              {(job.timeline || []).slice().reverse().map((t, i) => (
-                <div key={i} className="relative">
-                  <div className="absolute -left-[14px] top-1 w-2.5 h-2.5 rounded-full bg-offer-primary border-2 border-white dark:border-[#13151A]" />
-                  <p className="text-xs text-white/45">{t.date}</p>
-                  <p className="text-sm text-white/90 font-medium">{t.action}</p>
-                  {t.detail && <p className="text-xs text-white/45 mt-0.5">{t.detail}</p>}
-                </div>
-              ))}
-              {(!job.timeline || job.timeline.length === 0) && (
-                <p className="text-sm text-white/45 py-2">暂无时间线记录</p>
-              )}
-            </div>
-          </section>
+          <JobTimeline
+            job={job}
+            onAddEvent={(event) => addJobEvent(job.id, event)}
+            onDeleteEvent={(eventId) => deleteJobEvent(job.id, eventId)}
+          />
         </div>
 
         {/* Footer Actions */}

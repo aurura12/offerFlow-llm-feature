@@ -7,6 +7,7 @@
     "dev": "node scripts/dev.js",
     "build": "next build",
     "start": "next start",
+    "test": "node --test tests/*.test.mjs",
     "lint": "next lint",
     "postinstall": "prisma generate && (git config core.hooksPath scripts/hooks || true)",
     "db:generate": "prisma generate",

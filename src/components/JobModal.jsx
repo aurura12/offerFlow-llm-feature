@@ -139,13 +139,13 @@ function CityInput({ label, value, onChange, options }) {
   )
 }
 
-export default function JobModal({ open, job, onClose, initialStatus }) {
+export default function JobModal({ open, job, onClose, initialStatus, initialValues }) {
   const { resumes, cities, addCity, addToast, addJob, updateJob } = useApp()
   const [form, setForm] = useState(emptyForm)
 
   useEffect(() => {
     if (open) {
-      const base = job ? { ...emptyForm, ...job } : { ...emptyForm }
+      const base = job ? { ...emptyForm, ...job } : { ...emptyForm, ...(initialValues || {}) }
       if (!job && initialStatus) base.status = initialStatus
       setForm(base)
     }
@@ -182,13 +182,8 @@ export default function JobModal({ open, job, onClose, initialStatus }) {
         ? changed.map((c) => `${c.label}: ${formatFieldValue(c.oldVal, resumes)} → ${formatFieldValue(c.newVal, resumes) || '(空)'}`).join('；')
         : `更新了「${form.companyName} · ${form.jobTitle}」信息`
 
-      const patch = {
-        ...form,
-        timeline: [
-          ...(form.timeline || job.timeline || []),
-          { date: todayStr(), action: '编辑岗位', detail },
-        ],
-      }
+      const { id, userId, createdAt, updatedAt, timeline, events, ...editableFields } = form
+      const patch = { ...editableFields }
       await updateJob(job.id, patch)
       addToast('岗位已更新', 'success')
     } else {
@@ -197,13 +192,6 @@ export default function JobModal({ open, job, onClose, initialStatus }) {
       await addJob({
         ...form,
         appliedDate,
-        timeline: [
-          {
-            date: appliedDate,
-            action: '投递简历',
-            detail: form.channel ? `通过${form.channel}投递` : '新增岗位',
-          },
-        ],
       })
       addToast('岗位已新增', 'success')
     }

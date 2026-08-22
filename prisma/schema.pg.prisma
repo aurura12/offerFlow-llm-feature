@@ -16,6 +16,7 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at")
 
   jobs     Job[]
+  jobEvents JobEvent[]
   resumes  Resume[]
   tasks    Task[]
   reviews  Review[]
@@ -52,8 +53,28 @@ model Job {
   user   User    @relation(fields: [userId], references: [id])
   tasks  Task[]
   reviews Review[]
+  events JobEvent[]
 
   @@index([userId])
+}
+
+model JobEvent {
+  id         String   @id @default(cuid())
+  userId     String
+  jobId      String
+  type       String
+  title      String
+  eventDate  String
+  notes      String?
+  fromStatus String?
+  toStatus   String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([jobId, eventDate])
 }
 
 model Resume {
