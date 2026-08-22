@@ -1,13 +1,15 @@
 'use client'
 import { useApp } from '../store/AppContext'
 import { getJobEvents, sortJobEvents } from '../lib/jobTimeline'
+import { useRouter } from 'next/navigation'
 
 export default function Dashboard() {
-  const { jobs, tasks, reviews, updateTask, addToast } = useApp()
+  const router = useRouter()
+  const { jobs, offers, tasks, reviews, updateTask, addToast } = useApp()
 
   const activeJobs = jobs.filter((j) => !['已结束', 'Offer'].includes(j.status))
   const interviewJobs = jobs.filter((j) => ['笔试/在线测评', 'AI 面试', '一面中', '二面中', '三面中', '终面中'].includes(j.status))
-  const offerJobs = jobs.filter((j) => j.status === 'Offer')
+  const offerJobs = jobs.filter((j) => j.status === 'Offer' || offers.some((offer) => offer.jobId === j.id))
   const weekJobs = jobs.filter((j) => {
     if (!j.appliedDate) return false
     const d = new Date(j.appliedDate)
@@ -55,7 +57,14 @@ export default function Dashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {stats.map((s, i) => (
-          <div key={i} className="card-modern p-5 card-hover">
+          <div
+            key={i}
+            className={`card-modern p-5 card-hover ${s.label === 'Offer 数' ? 'cursor-pointer' : ''}`}
+            onClick={s.label === 'Offer 数' ? () => router.push('/offers') : undefined}
+            role={s.label === 'Offer 数' ? 'button' : undefined}
+            tabIndex={s.label === 'Offer 数' ? 0 : undefined}
+            onKeyDown={s.label === 'Offer 数' ? (e) => { if (e.key === 'Enter') router.push('/offers') } : undefined}
+          >
             <p className="text-gray-400 dark:text-white/45 text-sm mb-2">{s.label}</p>
             <p className={`text-3xl font-bold bg-gradient-to-r ${s.color} bg-clip-text text-transparent`}>
               {s.value}

@@ -5,6 +5,7 @@ import ModalHeader from './ModalHeader'
 import GlowCard from './GlowCard'
 import { WORK_MODE_LABELS } from './JobModal'
 import JobTimeline from './JobTimeline'
+import { calculateAnnualCash } from '../lib/offerComparison'
 
 const STATUS_ACTIONS = [
   { status: '待投递', label: '待投递', color: 'border-slate-200 text-slate-700 dark:text-slate-300 bg-slate-50 hover:bg-slate-100' },
@@ -35,8 +36,18 @@ function todayStr() {
   return new Date().toISOString().slice(0, 10)
 }
 
+const EMPTY_OFFER_FORM = {
+  monthlyBaseYuan: '',
+  salaryMonths: '',
+  annualBonusYuan: '',
+  city: '',
+  decisionDeadline: '',
+  benefits: '',
+  notes: '',
+}
+
 export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete }) {
-  const { jobs, resumes, addToast, updateJob, addJobEvent, deleteJobEvent, addTask, addReview } = useApp()
+  const { jobs, resumes, offers, addToast, updateJob, addJobEvent, deleteJobEvent, addTask, addReview, upsertOffer, deleteOffer } = useApp()
   const job = jobs.find((j) => j.id === jobId)
 
   // Sub-dialog state
@@ -45,6 +56,20 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
 
   const [taskForm, setTaskForm] = useState({ title: '', type: '其他', date: todayStr(), startTime: '', notes: '' })
   const [reviewForm, setReviewForm] = useState({ interviewDate: todayStr(), round: '一面', interviewType: '技术面', result: '待定', duration: '', interviewerInfo: '', rating: 3, note: '', strengths: '', weaknesses: '' })
+  const [offerForm, setOfferForm] = useState(EMPTY_OFFER_FORM)
+
+  useEffect(() => {
+    const offer = offers.find((item) => item.jobId === jobId)
+    setOfferForm(offer ? {
+      monthlyBaseYuan: offer.monthlyBaseYuan ?? '',
+      salaryMonths: offer.salaryMonths ?? '',
+      annualBonusYuan: offer.annualBonusYuan ?? '',
+      city: offer.city || '',
+      decisionDeadline: offer.decisionDeadline || '',
+      benefits: offer.benefits || '',
+      notes: offer.notes || '',
+    } : EMPTY_OFFER_FORM)
+  }, [offers, jobId])
 
   // ESC close
   useEffect(() => {
@@ -100,6 +125,24 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
     setShowReviewForm(false)
   }
 
+  const saveOffer = async () => {
+    const saved = await upsertOffer(jobId, offerForm)
+    if (!saved) return
+    addToast('Offer 条件已保存', 'success')
+  }
+
+  const clearOffer = async () => {
+    await deleteOffer(jobId)
+    setOfferForm(EMPTY_OFFER_FORM)
+    addToast('Offer 条件已清除', 'success')
+  }
+
+  const previewAnnualCash = calculateAnnualCash({
+    monthlyBaseYuan: offerForm.monthlyBaseYuan === '' ? null : Number(offerForm.monthlyBaseYuan),
+    salaryMonths: offerForm.salaryMonths === '' ? null : Number(offerForm.salaryMonths),
+    annualBonusYuan: offerForm.annualBonusYuan === '' ? 0 : Number(offerForm.annualBonusYuan),
+  })
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm modal-overlay" onClick={onClose}>
       <div className="modal-panel border w-full max-w-lg mx-4 max-h-[85vh] min-h-0 flex flex-col shadow-2xl shadow-black/40" onClick={(e) => e.stopPropagation()}>
@@ -130,6 +173,39 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
               <InfoRow label="投递日期" value={job.appliedDate || '-'} />
               <InfoRow label="等待天数" value={job.appliedDate ? `${Math.floor((new Date() - new Date(job.appliedDate)) / (1000 * 60 * 60 * 24))} 天` : '-'} />
               <InfoRow label="关联简历" value={resumeName ? `${resumeName.name} (${resumeName.version})` : '-'} />
+            </div>
+          </section>
+
+          {/* Offer comparison data */}
+          <section className="rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.04] p-4">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <h3 className="text-sm font-semibold text-white">Offer 条件</h3>
+                <p className="text-xs text-white/45 mt-1">填写后会出现在 Offer 对比页，金额单位为元</p>
+              </div>
+              {previewAnnualCash != null && (
+                <div className="text-right shrink-0">
+                  <p className="text-xs text-white/45">年现金估算</p>
+                  <p className="text-base font-semibold text-emerald-300">¥{new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 2 }).format(previewAnnualCash)}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <OfferInput label="月 base" type="number" value={offerForm.monthlyBaseYuan} onChange={(value) => setOfferForm((prev) => ({ ...prev, monthlyBaseYuan: value }))} placeholder="如 20000" />
+              <OfferInput label="薪资月数" type="number" step="0.5" value={offerForm.salaryMonths} onChange={(value) => setOfferForm((prev) => ({ ...prev, salaryMonths: value }))} placeholder="如 13" />
+              <OfferInput label="年终奖" type="number" value={offerForm.annualBonusYuan} onChange={(value) => setOfferForm((prev) => ({ ...prev, annualBonusYuan: value }))} placeholder="没有可留空" />
+              <OfferInput label="工作城市" value={offerForm.city} onChange={(value) => setOfferForm((prev) => ({ ...prev, city: value }))} placeholder={job.city || '如 北京'} />
+              <OfferInput label="决策截止日" type="date" value={offerForm.decisionDeadline} onChange={(value) => setOfferForm((prev) => ({ ...prev, decisionDeadline: value }))} />
+            </div>
+            <OfferInput label="福利" value={offerForm.benefits} onChange={(value) => setOfferForm((prev) => ({ ...prev, benefits: value }))} placeholder="如 六险一金、房补" />
+            <OfferInput label="Offer 备注" value={offerForm.notes} onChange={(value) => setOfferForm((prev) => ({ ...prev, notes: value }))} placeholder="如 汇报线、发展空间" textarea />
+
+            <div className="flex items-center justify-end gap-2 mt-3">
+              {offers.some((item) => item.jobId === jobId) && (
+                <button onClick={clearOffer} className="btn-secondary px-3 py-1.5 rounded-lg text-xs">清除</button>
+              )}
+              <button onClick={saveOffer} className="btn-gradient px-3 py-1.5 rounded-lg text-xs font-medium text-white">保存 Offer</button>
             </div>
           </section>
 
@@ -264,7 +340,7 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
         {/* Footer Actions */}
         <div className="flex items-center justify-between p-5 border-t border-slate-200 dark:border-white/10 shrink-0">
           <button
-            onClick={() => { onClose(); onDelete(job) }}
+            onClick={() => { onClose(); onDelete?.(job) }}
             className="btn-danger text-sm text-slate-500 dark:text-offer-muted hover:text-red-400 transition-colors flex items-center gap-1.5"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -273,7 +349,7 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
             删除
           </button>
           <button
-            onClick={() => { onClose(); onEdit(job) }}
+            onClick={() => { onClose(); onEdit?.(job) }}
             className="btn-gradient px-5 py-2 rounded-xl text-sm font-medium text-white"
           >
             编辑岗位
@@ -430,5 +506,19 @@ function InfoRow({ label, value }) {
       <p className="text-xs text-white/45">{label}</p>
       <p className="text-sm text-white mt-0.5">{value}</p>
     </div>
+  )
+}
+
+function OfferInput({ label, value, onChange, type = 'text', step, placeholder, textarea = false }) {
+  const className = "min-h-[38px] w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-emerald-400/50 focus:ring-1 focus:ring-emerald-400/20"
+  return (
+    <label className="block mt-3">
+      <span className="text-xs text-white/55 block mb-1">{label}</span>
+      {textarea ? (
+        <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={2} placeholder={placeholder} className={`${className} resize-none`} />
+      ) : (
+        <input type={type} step={step} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className={className} />
+      )}
+    </label>
   )
 }

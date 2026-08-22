@@ -206,7 +206,7 @@ export function AppProvider({ children }) {
     } catch (err) {
       // If unauthorized, just show empty data instead of falling
       // back to a potentially stale localStorage from another user.
-      if (err.message === 'Unauthorized') {
+      if (err.message === 'Unauthorized' || err.message === '未登录') {
         setJobsRaw([])
         setResumesRaw([])
         setTasksRaw([])
