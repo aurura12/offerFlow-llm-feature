@@ -155,6 +155,7 @@ export function AppProvider({ children }) {
   const [resumes, setResumesRaw] = useState([])
   const [tasks, setTasksRaw] = useState([])
   const [reviews, setReviewsRaw] = useState([])
+  const [offers, setOffersRaw] = useState([])
   const [settings, setSettingsRaw] = useState(() => {
     if (typeof window === 'undefined') return defaultSettings
     return loadFromStorage('offerFlow_settings', defaultSettings)
@@ -183,22 +184,25 @@ export function AppProvider({ children }) {
   async function loadAllData() {
     setDataLoading(true)
     try {
-      let [j, r, t, rv] = await Promise.all([
+      let [j, r, t, rv, of] = await Promise.all([
         apiFetch('/api/jobs'),
         apiFetch('/api/resumes'),
         apiFetch('/api/tasks'),
         apiFetch('/api/reviews'),
+        apiFetch('/api/offers'),
       ])
 
       setJobsRaw(migrateJobs(j))
       setResumesRaw(r)
       setTasksRaw(t)
       setReviewsRaw(rv)
+      setOffersRaw(of)
 
       saveToStorage('offerFlow_jobs', migrateJobs(j))
       saveToStorage('offerFlow_resumes', r)
       saveToStorage('offerFlow_tasks', t)
       saveToStorage('offerFlow_reviews', rv)
+      saveToStorage('offerFlow_offers', of)
     } catch (err) {
       // If unauthorized, just show empty data instead of falling
       // back to a potentially stale localStorage from another user.
@@ -207,6 +211,7 @@ export function AppProvider({ children }) {
         setResumesRaw([])
         setTasksRaw([])
         setReviewsRaw([])
+        setOffersRaw([])
       } else {
         console.error('[AppContext] API load failed, falling back to localStorage', err)
         addToast('数据加载失败，使用本地缓存', 'error')
@@ -215,6 +220,7 @@ export function AppProvider({ children }) {
         setResumesRaw(loadFromStorage('offerFlow_resumes', mock.resumes))
         setTasksRaw(loadFromStorage('offerFlow_tasks', mock.tasks))
         setReviewsRaw(loadFromStorage('offerFlow_reviews', mock.reviews))
+        setOffersRaw(loadFromStorage('offerFlow_offers', []))
       }
     } finally {
       setDataLoading(false)
@@ -251,6 +257,14 @@ export function AppProvider({ children }) {
     setReviewsRaw((prev) => {
       const next = typeof value === 'function' ? value(prev) : value
       saveToStorage('offerFlow_reviews', next)
+      return next
+    })
+  }, [])
+
+  const setOffers = useCallback((value) => {
+    setOffersRaw((prev) => {
+      const next = typeof value === 'function' ? value(prev) : value
+      saveToStorage('offerFlow_offers', next)
       return next
     })
   }, [])
@@ -324,10 +338,34 @@ export function AppProvider({ children }) {
     try {
       await apiFetch('/api/jobs', { method: 'DELETE', body: JSON.stringify({ ids: idList }) })
       setJobs((prev) => prev.filter((j) => !idList.includes(j.id)))
+      setOffers((prev) => prev.filter((offer) => !idList.includes(offer.jobId)))
     } catch (err) {
       addToast(err.message, 'error')
     }
-  }, [setJobs, addToast])
+  }, [setJobs, setOffers, addToast])
+
+  // Offers
+  const upsertOffer = useCallback(async (jobId, formData) => {
+    try {
+      const offer = await apiFetch(`/api/jobs/${jobId}/offer`, {
+        method: 'PUT',
+        body: JSON.stringify(formData),
+      })
+      setOffers((prev) => [offer, ...prev.filter((item) => item.jobId !== jobId)])
+      return offer
+    } catch (err) {
+      addToast(err.message, 'error')
+    }
+  }, [setOffers, addToast])
+
+  const deleteOffer = useCallback(async (jobId) => {
+    try {
+      await apiFetch(`/api/jobs/${jobId}/offer`, { method: 'DELETE' })
+      setOffers((prev) => prev.filter((offer) => offer.jobId !== jobId))
+    } catch (err) {
+      addToast(err.message, 'error')
+    }
+  }, [setOffers, addToast])
 
   // Resumes
   const addResume = useCallback(async (formData) => {
@@ -471,11 +509,13 @@ export function AppProvider({ children }) {
       resumes, setResumes,
       tasks, setTasks,
       reviews, setReviews,
+      offers, setOffers,
       addJob, updateJob, deleteJob,
       addJobEvent, deleteJobEvent,
       addResume, updateResume, deleteResume,
       addTask, updateTask, deleteTask,
       addReview, updateReview, deleteReview,
+      upsertOffer, deleteOffer,
       settings, setSettings,
       cities, setCities, addCity,
       toasts, addToast,
