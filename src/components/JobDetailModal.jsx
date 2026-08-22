@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react'
 import { useApp } from '../store/AppContext'
 import ModalHeader from './ModalHeader'
 import GlowCard from './GlowCard'
-import { WORK_MODE_LABELS } from './JobModal'
+import { CityInput, WORK_MODE_LABELS } from './JobModal'
 import JobTimeline from './JobTimeline'
-import { calculateAnnualCash } from '../lib/offerComparison'
+import { calculateAnnualCash, kToYuan, yuanToK } from '../lib/offerComparison'
 
 const STATUS_ACTIONS = [
   { status: '待投递', label: '待投递', color: 'border-slate-200 text-slate-700 dark:text-slate-300 bg-slate-50 hover:bg-slate-100' },
@@ -37,7 +37,7 @@ function todayStr() {
 }
 
 const EMPTY_OFFER_FORM = {
-  monthlyBaseYuan: '',
+  monthlyBaseK: '',
   salaryMonths: '',
   annualBonusYuan: '',
   city: '',
@@ -47,7 +47,7 @@ const EMPTY_OFFER_FORM = {
 }
 
 export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete }) {
-  const { jobs, resumes, offers, addToast, updateJob, addJobEvent, deleteJobEvent, addTask, addReview, upsertOffer, deleteOffer } = useApp()
+  const { jobs, resumes, cities, offers, addToast, updateJob, addJobEvent, deleteJobEvent, addTask, addReview, upsertOffer, deleteOffer } = useApp()
   const job = jobs.find((j) => j.id === jobId)
 
   // Sub-dialog state
@@ -61,15 +61,15 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
   useEffect(() => {
     const offer = offers.find((item) => item.jobId === jobId)
     setOfferForm(offer ? {
-      monthlyBaseYuan: offer.monthlyBaseYuan ?? '',
+      monthlyBaseK: yuanToK(offer.monthlyBaseYuan) ?? '',
       salaryMonths: offer.salaryMonths ?? '',
       annualBonusYuan: offer.annualBonusYuan ?? '',
-      city: offer.city || '',
+      city: offer.city || job?.city || '',
       decisionDeadline: offer.decisionDeadline || '',
       benefits: offer.benefits || '',
       notes: offer.notes || '',
     } : EMPTY_OFFER_FORM)
-  }, [offers, jobId])
+  }, [offers, jobId, job?.city])
 
   // ESC close
   useEffect(() => {
@@ -126,7 +126,10 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
   }
 
   const saveOffer = async () => {
-    const saved = await upsertOffer(jobId, offerForm)
+    const saved = await upsertOffer(jobId, {
+      ...offerForm,
+      monthlyBaseYuan: kToYuan(offerForm.monthlyBaseK),
+    })
     if (!saved) return
     addToast('Offer 条件已保存', 'success')
   }
@@ -138,7 +141,7 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
   }
 
   const previewAnnualCash = calculateAnnualCash({
-    monthlyBaseYuan: offerForm.monthlyBaseYuan === '' ? null : Number(offerForm.monthlyBaseYuan),
+    monthlyBaseYuan: kToYuan(offerForm.monthlyBaseK),
     salaryMonths: offerForm.salaryMonths === '' ? null : Number(offerForm.salaryMonths),
     annualBonusYuan: offerForm.annualBonusYuan === '' ? 0 : Number(offerForm.annualBonusYuan),
   })
@@ -182,7 +185,7 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
             <div className="flex items-start justify-between gap-3 mb-3">
               <div>
                 <h3 className="text-sm font-semibold text-white">Offer 条件</h3>
-                <p className="text-xs text-white/45 mt-1">填写后会出现在 Offer 对比页，金额单位为元</p>
+                <p className="text-xs text-white/45 mt-1">填写后会出现在 Offer 对比页，月 base 用 K，年终奖用元</p>
               </div>
               {previewAnnualCash != null && (
                 <div className="text-right shrink-0">
@@ -193,10 +196,10 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <OfferInput label="月 base" type="number" value={offerForm.monthlyBaseYuan} onChange={(value) => setOfferForm((prev) => ({ ...prev, monthlyBaseYuan: value }))} placeholder="如 20000" />
+              <OfferInput label="月 base（K）" type="number" step="0.1" value={offerForm.monthlyBaseK} onChange={(value) => setOfferForm((prev) => ({ ...prev, monthlyBaseK: value }))} placeholder="如 20" />
               <OfferInput label="薪资月数" type="number" step="0.5" value={offerForm.salaryMonths} onChange={(value) => setOfferForm((prev) => ({ ...prev, salaryMonths: value }))} placeholder="如 13" />
               <OfferInput label="年终奖" type="number" value={offerForm.annualBonusYuan} onChange={(value) => setOfferForm((prev) => ({ ...prev, annualBonusYuan: value }))} placeholder="没有可留空" />
-              <OfferInput label="工作城市" value={offerForm.city} onChange={(value) => setOfferForm((prev) => ({ ...prev, city: value }))} placeholder={job.city || '如 北京'} />
+              <CityInput label="工作城市" value={offerForm.city} onChange={(value) => setOfferForm((prev) => ({ ...prev, city: value }))} options={cities} />
               <OfferInput label="决策截止日" type="date" value={offerForm.decisionDeadline} onChange={(value) => setOfferForm((prev) => ({ ...prev, decisionDeadline: value }))} />
             </div>
             <OfferInput label="福利" value={offerForm.benefits} onChange={(value) => setOfferForm((prev) => ({ ...prev, benefits: value }))} placeholder="如 六险一金、房补" />

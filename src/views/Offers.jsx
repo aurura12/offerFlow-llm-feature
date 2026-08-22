@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useApp } from '../store/AppContext'
-import { calculateAnnualCash } from '../lib/offerComparison'
+import { calculateAnnualCash, yuanToK } from '../lib/offerComparison'
 import JobDetailModal from '../components/JobDetailModal'
 
 const money = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 2 })
@@ -77,7 +77,7 @@ export default function Offers() {
 
                 <div className="grid grid-cols-2 gap-3 mt-5">
                   <OfferField label="年现金（估算）" value={formatAnnualCash(offer)} emphasized />
-                  <OfferField label="月 base" value={offer?.monthlyBaseYuan != null ? `¥${money.format(offer.monthlyBaseYuan)}` : '待补充'} />
+                  <OfferField label="月 base（K）" value={offer?.monthlyBaseYuan != null ? `${money.format(yuanToK(offer.monthlyBaseYuan))}K` : '待补充'} />
                   <OfferField label="薪资月数" value={offer?.salaryMonths != null ? `${offer.salaryMonths} 个月` : '待补充'} />
                   <OfferField label="城市" value={offer?.city || job.city || '待补充'} />
                   <OfferField label="决策截止" value={offer?.decisionDeadline || '未填写'} />

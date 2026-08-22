@@ -91,7 +91,7 @@ function formatFieldValue(val, resumes) {
   return val
 }
 
-function CityInput({ label, value, onChange, options }) {
+export function CityInput({ label, value, onChange, options }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
@@ -119,7 +119,7 @@ function CityInput({ label, value, onChange, options }) {
         onFocus={() => setOpen(true)}
         placeholder="选择或输入城市"
         autoComplete="off"
-        className="min-h-[40px] w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 outline-none transition-all duration-200 focus:border-purple-400/70 focus:ring-2 focus:ring-purple-500/20"
+        className="min-h-[40px] w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-purple-400/70 focus:ring-2 focus:ring-purple-500/20 dark:border-white/10 dark:bg-white/[0.03] dark:text-white dark:placeholder:text-gray-500"
       />
       {open && filtered.length > 0 && (
         <ul className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg">

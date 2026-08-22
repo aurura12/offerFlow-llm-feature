@@ -15,6 +15,18 @@ function optionalDate(value) {
   return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : null
 }
 
+export function kToYuan(value) {
+  if (value === '' || value === null || value === undefined) return null
+  const number = Number(value)
+  return Number.isFinite(number) && number >= 0 ? number * 1000 : null
+}
+
+export function yuanToK(value) {
+  if (value === '' || value === null || value === undefined) return null
+  const number = Number(value)
+  return Number.isFinite(number) && number >= 0 ? number / 1000 : null
+}
+
 export function parseOfferInput(value) {
   const input = value || {}
   const monthlyBaseYuan = optionalNumber(input.monthlyBaseYuan)

@@ -1,6 +1,12 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { calculateAnnualCash, parseOfferInput } from '../src/lib/offerComparison.js'
+import { calculateAnnualCash, kToYuan, parseOfferInput, yuanToK } from '../src/lib/offerComparison.js'
+
+test('converts monthly base between K and yuan', () => {
+  assert.equal(kToYuan(20), 20000)
+  assert.equal(yuanToK(20500), 20.5)
+  assert.equal(kToYuan(''), null)
+})
 
 test('calculates annual cash', () => {
   assert.equal(calculateAnnualCash({
